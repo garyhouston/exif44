@@ -4,7 +4,7 @@ exif44 is a Go library for encoding and decoding Exif data in TIFF and JPEG file
 For documentation, see https://godoc.org/github.com/garyhouston/exif44.
 
 ## Notes and limitations
-Since Exif stores metadata in TIFF format, this library makes use of the [tiff66 library](https://github.com/garyhouston/tiff66). The notes that apply to that library are relevant here.
+Since Exif stores metadata in TIFF format, this library makes use of the [tiff66 library](https://github.com/garyhouston/tiff66). The notes that apply to that library are relevant here. The [jpegsegs library](https://github.com/garyhouston/jpegsegs) can be used to decode a JPEG file into segments.
 
 The exif44print program prints the IFDs (image file directories) and fields, either from a TIFF file or from the Exif segment of a JPEG file.
 
