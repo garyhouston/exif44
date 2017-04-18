@@ -58,6 +58,7 @@ func processJPEG(scanner *jseg.Scanner) ([]byte, error) {
 				if err != nil {
 					return out.Bytes(), err
 				}
+				tree.Tree.Fix(tree.Order)
 				app1 := make([]byte, exif.HeaderSize()+tree.TreeSize())
 				next := exif.PutHeader(app1)
 				_, err = tree.Put(app1[next:])
