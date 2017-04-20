@@ -2,19 +2,26 @@ package main
 
 import (
 	"bytes"
-	"encoding/binary"
-	"flag"
+	"errors"
 	"fmt"
 	exif "github.com/garyhouston/exif44"
 	jseg "github.com/garyhouston/jpegsegs"
 	tiff "github.com/garyhouston/tiff66"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 )
 
-func processTIFF(buf []byte, order binary.ByteOrder, ifdPos uint32) ([]byte, error) {
+func processTIFF(file io.Reader) ([]byte, error) {
+	buf, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	validTIFF, order, ifdPos := tiff.GetHeader(buf)
+	if !validTIFF {
+		return nil, errors.New("processTIFF: invalid TIFF header")
+	}
 	root, err := tiff.GetIFDTree(buf, order, ifdPos, tiff.TIFFSpace)
 	if err != nil {
 		return nil, err
@@ -31,7 +38,11 @@ func processTIFF(buf []byte, order binary.ByteOrder, ifdPos uint32) ([]byte, err
 	return out, nil
 }
 
-func processJPEG(scanner *jseg.Scanner) ([]byte, error) {
+func processJPEG(file io.Reader) ([]byte, error) {
+	scanner, err := jseg.NewScanner(file)
+	if err != nil {
+		return nil, err
+	}
 	out := new(bytes.Buffer)
 	dumper, err := jseg.NewDumper(out)
 	if err != nil {
@@ -74,6 +85,26 @@ func processJPEG(scanner *jseg.Scanner) ([]byte, error) {
 	}
 }
 
+const (
+	TIFFFile = 1
+	JPEGFile = 2
+)
+
+// Determine if file is TIFF, JPEG or neither (error)
+func fileType(file io.Reader) (int, error) {
+	buf := make([]byte, tiff.HeaderSize)
+	if _, err := io.ReadFull(file, buf); err != nil {
+		return 0, err
+	}
+	if jseg.IsJPEGHeader(buf) {
+		return JPEGFile, nil
+	}
+	if validTIFF, _, _ := tiff.GetHeader(buf); validTIFF {
+		return TIFFFile, nil
+	}
+	return 0, errors.New("File doesn't have a TIFF or JPEG header")
+}
+
 // Decode a TIFF file, or the Exif segment in a JPEG file, then re-encode
 // it and write to a new file.
 func main() {
@@ -81,25 +112,26 @@ func main() {
 		fmt.Printf("Usage: %s file outfile\n", os.Args[0])
 		return
 	}
-	buf, err := ioutil.ReadFile(os.Args[1])
+	file, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
-	validTIFF, order, ifdPos := tiff.GetHeader(buf)
+	defer file.Close()
+	fileType, err := fileType(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if _, err := file.Seek(0, 0); err != nil {
+		log.Fatal(err)
+	}
 	var out []byte
-	if validTIFF {
-		var err error
-		out, err = processTIFF(buf, order, ifdPos)
+	if fileType == TIFFFile {
+		out, err = processTIFF(file)
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
-		reader := strings.NewReader(string(buf))
-		scanner, err := jseg.NewScanner(reader)
-		if err != nil {
-			log.Fatal(flag.Arg(0), " not a valid TIFF or JPEG file")
-		}
-		out, err = processJPEG(scanner)
+		out, err = processJPEG(file)
 		if err != nil {
 			log.Fatal(err)
 		}
