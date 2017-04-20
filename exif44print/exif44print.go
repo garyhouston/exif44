@@ -35,14 +35,10 @@ func printTree(node *tiff.IFDNode, order binary.ByteOrder, length uint32) {
 	}
 }
 
-func processTIFF(file io.Reader, maxLen uint32) error {
-	buf, err := ioutil.ReadAll(file)
-	if err != nil {
-		return err
-	}
+func scanTIFF(buf []byte, maxLen uint32) error {
 	validTIFF, order, ifdPos := tiff.GetHeader(buf)
 	if !validTIFF {
-		return errors.New("processTIFF: not a TIFF file")
+		return errors.New("scanTIFF: invalid TIFF header")
 	}
 	root, err := tiff.GetIFDTree(buf, order, ifdPos, tiff.TIFFSpace)
 	if err != nil {
@@ -50,6 +46,14 @@ func processTIFF(file io.Reader, maxLen uint32) error {
 	}
 	printTree(root, order, maxLen)
 	return nil
+}
+
+func processTIFF(file io.Reader, maxLen uint32) error {
+	buf, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	return scanTIFF(buf, maxLen)
 }
 
 func processJPEG(file io.Reader, maxLen uint32) error {
@@ -69,11 +73,7 @@ func processJPEG(file io.Reader, maxLen uint32) error {
 		if marker == jseg.APP0+1 {
 			isExif, next := exif.GetHeader(buf)
 			if isExif {
-				exif, err := exif.GetExifTree(buf[next:])
-				if err != nil {
-					return err
-				}
-				printTree(exif.Tree, exif.Order, maxLen)
+				scanTIFF(buf[next:], maxLen)
 			}
 		}
 	}
