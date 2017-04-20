@@ -20,11 +20,10 @@ func processTIFF(buf []byte, order binary.ByteOrder, ifdPos uint32) ([]byte, err
 		return nil, err
 	}
 	root.Fix(order)
-	headerSize := tiff.HeaderSize()
-	fileSize := headerSize + root.TreeSize()
+	fileSize := tiff.HeaderSize + root.TreeSize()
 	out := make([]byte, fileSize)
-	tiff.PutHeader(out, order, headerSize)
-	next, err := root.PutIFDTree(out, headerSize, order)
+	tiff.PutHeader(out, order, tiff.HeaderSize)
+	next, err := root.PutIFDTree(out, tiff.HeaderSize, order)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +58,7 @@ func processJPEG(scanner *jseg.Scanner) ([]byte, error) {
 					return out.Bytes(), err
 				}
 				tree.Tree.Fix(tree.Order)
-				app1 := make([]byte, exif.HeaderSize()+tree.TreeSize())
+				app1 := make([]byte, exif.HeaderSize+tree.TreeSize())
 				next := exif.PutHeader(app1)
 				_, err = tree.Put(app1[next:])
 				if err != nil {
