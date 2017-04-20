@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	exif "github.com/garyhouston/exif44"
@@ -13,74 +12,73 @@ import (
 	"os"
 )
 
-func processTIFF(file io.Reader) ([]byte, error) {
-	buf, err := ioutil.ReadAll(file)
+func processTIFF(infile io.Reader, outfile io.Writer) error {
+	buf, err := ioutil.ReadAll(infile)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	validTIFF, order, ifdPos := tiff.GetHeader(buf)
 	if !validTIFF {
-		return nil, errors.New("processTIFF: invalid TIFF header")
+		return errors.New("processTIFF: invalid TIFF header")
 	}
 	root, err := tiff.GetIFDTree(buf, order, ifdPos, tiff.TIFFSpace)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	root.Fix(order)
 	fileSize := tiff.HeaderSize + root.TreeSize()
 	out := make([]byte, fileSize)
 	tiff.PutHeader(out, order, tiff.HeaderSize)
-	next, err := root.PutIFDTree(out, tiff.HeaderSize, order)
+	_, err = root.PutIFDTree(out, tiff.HeaderSize, order)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	out = out[:next]
-	return out, nil
+	_, err = outfile.Write(out)
+	return err
 }
 
-func processJPEG(file io.Reader) ([]byte, error) {
-	scanner, err := jseg.NewScanner(file)
+func processJPEG(infile io.Reader, outfile io.Writer) error {
+	scanner, err := jseg.NewScanner(infile)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	out := new(bytes.Buffer)
-	dumper, err := jseg.NewDumper(out)
+	dumper, err := jseg.NewDumper(outfile)
 	if err != nil {
-		return out.Bytes(), err
+		return err
 	}
 	for {
 		marker, buf, err := scanner.Scan()
 		if err != nil {
-			return out.Bytes(), err
+			return err
 		}
 		if marker == jseg.SOS {
 			// Start of scan data, no more metadata expected.
 			if err := dumper.Dump(marker, nil); err != nil {
-				return out.Bytes(), err
+				return err
 			}
 			err := dumper.Copy(scanner)
-			return out.Bytes(), err
+			return err
 		}
 		if marker == jseg.APP0+1 {
 			isExif, next := exif.GetHeader(buf)
 			if isExif {
 				tree, err := exif.GetExifTree(buf[next:])
 				if err != nil {
-					return out.Bytes(), err
+					return err
 				}
 				tree.Tree.Fix(tree.Order)
 				app1 := make([]byte, exif.HeaderSize+tree.TreeSize())
 				next := exif.PutHeader(app1)
 				_, err = tree.Put(app1[next:])
 				if err != nil {
-					return out.Bytes(), err
+					return err
 				}
 				buf = app1
 			}
 
 		}
 		if err := dumper.Dump(marker, buf); err != nil {
-			return out.Bytes(), err
+			return err
 		}
 	}
 }
@@ -112,29 +110,32 @@ func main() {
 		fmt.Printf("Usage: %s file outfile\n", os.Args[0])
 		return
 	}
-	file, err := os.Open(os.Args[1])
+	infile, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
-	fileType, err := fileType(file)
+	defer infile.Close()
+	fileType, err := fileType(infile)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if _, err := file.Seek(0, 0); err != nil {
+	if _, err := infile.Seek(0, 0); err != nil {
 		log.Fatal(err)
 	}
-	var out []byte
+	outfile, err := os.Create(os.Args[2])
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer outfile.Close()
 	if fileType == TIFFFile {
-		out, err = processTIFF(file)
+		err = processTIFF(infile, outfile)
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
-		out, err = processJPEG(file)
+		err = processJPEG(infile, outfile)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	ioutil.WriteFile(os.Args[2], out, 0644)
 }
