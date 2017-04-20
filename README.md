@@ -18,6 +18,4 @@ As per tiff66, most maker note fields found in Exif are not currently decoded. I
 
 This library makes no provision for modification of data in multiple threads. Mutexes etc., should be used as required.
 
-Invalid files may result in vague errors or strange data structures.
-
 '44' is an arbitrary number to distinguish this library from all the other Exif libraries.
