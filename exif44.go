@@ -258,19 +258,17 @@ func TagNameMap(space tiff.TagSpace) map[tiff.Tag]string {
 	return names
 }
 
+// Exif header, as found in a JPEG APP1 segment.
 var header = []byte("Exif\000\000")
 
-// Return the size of a Exif header, as found in a JPEG APP1 segment.
-func HeaderSize() uint32 {
-	return uint32(len(header))
-}
+// Size of an Exif header.
+const HeaderSize = 6
 
 // Check if a slice starts with an Exif header, as found in a JPEG
 // APP1 segment.  Returns a flag and the position of the next byte.
 func GetHeader(buf []byte) (bool, uint32) {
-	headLen := HeaderSize()
-	if uint32(len(buf)) >= headLen && bytes.Compare(buf[:headLen], header) == 0 {
-		return true, headLen
+	if uint32(len(buf)) >= HeaderSize && bytes.Compare(buf[:HeaderSize], header) == 0 {
+		return true, HeaderSize
 	} else {
 		return false, 0
 	}
@@ -280,7 +278,7 @@ func GetHeader(buf []byte) (bool, uint32) {
 // returning the position of the next byte.
 func PutHeader(buf []byte) uint32 {
 	copy(buf, header)
-	return HeaderSize()
+	return HeaderSize
 }
 
 type Exif struct {
@@ -333,13 +331,13 @@ func GetExifTree(buf []byte) (*Exif, error) {
 // structure in TIFF format, including the TIFF header, but excluding
 // the Exif header used in JPEG files.
 func (exif Exif) TreeSize() uint32 {
-	return tiff.HeaderSize() + exif.Tree.TreeSize()
+	return tiff.HeaderSize + exif.Tree.TreeSize()
 }
 
 // Pack Exif data into a slice in TIFF format. The slice should start
 // with the first byte following any Exif header. Returns the position
 // following the last byte used.
 func (exif *Exif) Put(buf []byte) (uint32, error) {
-	tiff.PutHeader(buf, exif.Order, tiff.HeaderSize())
-	return exif.Tree.PutIFDTree(buf, tiff.HeaderSize(), exif.Order)
+	tiff.PutHeader(buf, exif.Order, tiff.HeaderSize)
+	return exif.Tree.PutIFDTree(buf, tiff.HeaderSize, exif.Order)
 }
