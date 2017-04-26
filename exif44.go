@@ -282,13 +282,16 @@ func PutHeader(buf []byte) uint32 {
 }
 
 type Exif struct {
-	Order     binary.ByteOrder
-	Tree      *tiff.IFDNode // Tree with all IFDs and image data.
-	TIFF      *tiff.IFD_T   // Pointer to TIFF IFD0 in Tree.
-	Exif      *tiff.IFD_T   // Pointer to Exif IFD in Tree.
-	GPS       *tiff.IFD_T   // Pointer to GPS IFD in Tree.
-	Interop   *tiff.IFD_T   // Pointer to Interop IFD in Tree.
-	Thumbnail *tiff.IFD_T   // Pointer to TIFF IFD1 in Tree.
+	Order          binary.ByteOrder
+	Tree           *tiff.IFDNode    // Tree with all IFDs and image data.
+	TIFF           *tiff.IFD_T      // Pointer to TIFF IFD0 in Tree.
+	Exif           *tiff.IFD_T      // Pointer to Exif IFD in Tree.
+	GPS            *tiff.IFD_T      // Pointer to GPS IFD in Tree.
+	Interop        *tiff.IFD_T      // Pointer to Interop IFD in Tree.
+	Thumbnail      *tiff.IFD_T      // Pointer to TIFF IFD1 in Tree.
+	MakerNote      *tiff.IFD_T      // Pointer to maker note IFD in Tree.
+	MakerNoteSpace tiff.TagSpace    // Name space of maker note.
+	MakerNoteOrder binary.ByteOrder // Byte order of maker note. Generally the entire tree has the same byte order, but maker notes can differ.
 }
 
 // Unpack a TIFF header and tree from a slice, as for GetHeader and
@@ -315,6 +318,10 @@ func GetExifTree(buf []byte) (*Exif, error) {
 			for _, esub := range sub.Node.SubIFDs {
 				if esub.Node.Space == tiff.InteropSpace {
 					exif.Interop = &esub.Node.IFD
+				} else if esub.Node.Space.IsMakerNote() {
+					exif.MakerNote = &esub.Node.IFD
+					exif.MakerNoteSpace = esub.Node.Space
+					exif.MakerNoteOrder = esub.Node.Space.ByteOrder(order)
 				}
 			}
 		} else if sub.Node.Space == tiff.GPSSpace {
