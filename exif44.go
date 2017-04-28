@@ -281,14 +281,12 @@ func PutHeader(buf []byte) uint32 {
 }
 
 type Exif struct {
-	Tree           *tiff.IFDNode    // Tree with all IFDs and image data.
-	TIFF           *tiff.IFD_T      // Pointer to TIFF IFD0 in Tree.
-	Exif           *tiff.IFD_T      // Pointer to Exif IFD in Tree.
-	GPS            *tiff.IFD_T      // Pointer to GPS IFD in Tree.
-	Interop        *tiff.IFD_T      // Pointer to Interop IFD in Tree.
-	Thumbnail      *tiff.IFD_T      // Pointer to TIFF IFD1 in Tree.
-	MakerNote      *tiff.IFD_T      // Pointer to maker note IFD in Tree.
-	MakerNoteSpace tiff.TagSpace    // Name space of maker note.
+	TIFF      *tiff.IFDNode // Pointer to top-level TIFF node, IFD0. This is the root of the tree containing all other nodes.
+	Exif      *tiff.IFDNode // Pointer to Exif in Tree.
+	GPS       *tiff.IFDNode // Pointer to GPS in Tree.
+	Interop   *tiff.IFDNode // Pointer to Interop in Tree.
+	Thumbnail *tiff.IFDNode // Pointer to TIFF IFD1 in Tree.
+	MakerNote *tiff.IFDNode // Pointer to maker note in Tree.
 }
 
 // Unpack a TIFF header and tree from a slice, as for GetHeader and
@@ -306,25 +304,23 @@ func GetExifTree(buf []byte) (*Exif, error) {
 		return nil, err
 	}
 	exif := Exif{}
-	exif.Tree = node
-	exif.TIFF = &node.IFD_T
+	exif.TIFF = node
 	for _, sub := range node.SubIFDs {
 		if sub.Node.Space == tiff.ExifSpace {
-			exif.Exif = &sub.Node.IFD_T
+			exif.Exif = sub.Node
 			for _, esub := range sub.Node.SubIFDs {
 				if esub.Node.Space == tiff.InteropSpace {
-					exif.Interop = &esub.Node.IFD_T
+					exif.Interop = esub.Node
 				} else if esub.Node.Space.IsMakerNote() {
-					exif.MakerNote = &esub.Node.IFD_T
-					exif.MakerNoteSpace = esub.Node.Space
+					exif.MakerNote = esub.Node
 				}
 			}
 		} else if sub.Node.Space == tiff.GPSSpace {
-			exif.GPS = &sub.Node.IFD_T
+			exif.GPS = sub.Node
 		}
 	}
 	if node.Next != nil {
-		exif.Thumbnail = &node.Next.IFD_T
+		exif.Thumbnail = node.Next
 	}
 	return &exif, nil
 }
@@ -333,13 +329,13 @@ func GetExifTree(buf []byte) (*Exif, error) {
 // structure in TIFF format, including the TIFF header, but excluding
 // the Exif header used in JPEG files.
 func (exif Exif) TreeSize() uint32 {
-	return tiff.HeaderSize + exif.Tree.TreeSize()
+	return tiff.HeaderSize + exif.TIFF.TreeSize()
 }
 
 // Pack Exif data into a slice in TIFF format. The slice should start
 // with the first byte following any Exif header. Returns the position
 // following the last byte used.
 func (exif *Exif) Put(buf []byte) (uint32, error) {
-	tiff.PutHeader(buf, exif.Tree.Order, tiff.HeaderSize)
-	return exif.Tree.PutIFDTree(buf, tiff.HeaderSize)
+	tiff.PutHeader(buf, exif.TIFF.Order, tiff.HeaderSize)
+	return exif.TIFF.PutIFDTree(buf, tiff.HeaderSize)
 }
