@@ -311,25 +311,25 @@ func GetExifTree(buf []byte) (*Exif, error) {
 	exif := Exif{}
 	exif.Tree = node
 	exif.Order = order
-	exif.TIFF = &node.IFD
+	exif.TIFF = &node.IFD_T
 	for _, sub := range node.SubIFDs {
 		if sub.Node.Space == tiff.ExifSpace {
-			exif.Exif = &sub.Node.IFD
+			exif.Exif = &sub.Node.IFD_T
 			for _, esub := range sub.Node.SubIFDs {
 				if esub.Node.Space == tiff.InteropSpace {
-					exif.Interop = &esub.Node.IFD
+					exif.Interop = &esub.Node.IFD_T
 				} else if esub.Node.Space.IsMakerNote() {
-					exif.MakerNote = &esub.Node.IFD
+					exif.MakerNote = &esub.Node.IFD_T
 					exif.MakerNoteSpace = esub.Node.Space
 					exif.MakerNoteOrder = esub.Node.Space.ByteOrder(order)
 				}
 			}
 		} else if sub.Node.Space == tiff.GPSSpace {
-			exif.GPS = &sub.Node.IFD
+			exif.GPS = &sub.Node.IFD_T
 		}
 	}
 	if node.Next != nil {
-		exif.Thumbnail = &node.Next.IFD
+		exif.Thumbnail = &node.Next.IFD_T
 	}
 	return &exif, nil
 }

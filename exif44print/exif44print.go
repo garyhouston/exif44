@@ -16,7 +16,7 @@ import (
 
 func printTree(node *tiff.IFDNode, order binary.ByteOrder, length uint32) {
 	fmt.Println()
-	fields := node.IFD.Fields
+	fields := node.Fields
 	fmt.Printf("%s IFD with %d ", node.Space.Name(), len(fields))
 	if len(fields) > 1 {
 		fmt.Println("entries:")
