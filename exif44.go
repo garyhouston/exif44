@@ -2,7 +2,6 @@ package exif44
 
 import (
 	"bytes"
-	"encoding/binary"
 	"errors"
 	tiff "github.com/garyhouston/tiff66"
 )
@@ -282,7 +281,6 @@ func PutHeader(buf []byte) uint32 {
 }
 
 type Exif struct {
-	Order          binary.ByteOrder
 	Tree           *tiff.IFDNode    // Tree with all IFDs and image data.
 	TIFF           *tiff.IFD_T      // Pointer to TIFF IFD0 in Tree.
 	Exif           *tiff.IFD_T      // Pointer to Exif IFD in Tree.
@@ -291,7 +289,6 @@ type Exif struct {
 	Thumbnail      *tiff.IFD_T      // Pointer to TIFF IFD1 in Tree.
 	MakerNote      *tiff.IFD_T      // Pointer to maker note IFD in Tree.
 	MakerNoteSpace tiff.TagSpace    // Name space of maker note.
-	MakerNoteOrder binary.ByteOrder // Byte order of maker note. Generally the entire tree has the same byte order, but maker notes can differ.
 }
 
 // Unpack a TIFF header and tree from a slice, as for GetHeader and
@@ -310,7 +307,6 @@ func GetExifTree(buf []byte) (*Exif, error) {
 	}
 	exif := Exif{}
 	exif.Tree = node
-	exif.Order = order
 	exif.TIFF = &node.IFD_T
 	for _, sub := range node.SubIFDs {
 		if sub.Node.Space == tiff.ExifSpace {
@@ -321,7 +317,6 @@ func GetExifTree(buf []byte) (*Exif, error) {
 				} else if esub.Node.Space.IsMakerNote() {
 					exif.MakerNote = &esub.Node.IFD_T
 					exif.MakerNoteSpace = esub.Node.Space
-					exif.MakerNoteOrder = esub.Node.Space.ByteOrder(order)
 				}
 			}
 		} else if sub.Node.Space == tiff.GPSSpace {
@@ -345,6 +340,6 @@ func (exif Exif) TreeSize() uint32 {
 // with the first byte following any Exif header. Returns the position
 // following the last byte used.
 func (exif *Exif) Put(buf []byte) (uint32, error) {
-	tiff.PutHeader(buf, exif.Order, tiff.HeaderSize)
-	return exif.Tree.PutIFDTree(buf, tiff.HeaderSize, exif.Order)
+	tiff.PutHeader(buf, exif.Tree.Order, tiff.HeaderSize)
+	return exif.Tree.PutIFDTree(buf, tiff.HeaderSize)
 }
