@@ -25,11 +25,11 @@ func processTIFF(infile io.Reader, outfile io.Writer) error {
 	if err != nil {
 		return err
 	}
-	root.Fix(order)
+	root.Fix()
 	fileSize := tiff.HeaderSize + root.TreeSize()
 	out := make([]byte, fileSize)
 	tiff.PutHeader(out, order, tiff.HeaderSize)
-	_, err = root.PutIFDTree(out, tiff.HeaderSize, order)
+	_, err = root.PutIFDTree(out, tiff.HeaderSize)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func processJPEG(infile io.Reader, outfile io.Writer) error {
 				if err != nil {
 					return err
 				}
-				tree.Tree.Fix(tree.Order)
+				tree.Tree.Fix()
 				app1 := make([]byte, exif.HeaderSize+tree.TreeSize())
 				next := exif.PutHeader(app1)
 				_, err = tree.Put(app1[next:])
