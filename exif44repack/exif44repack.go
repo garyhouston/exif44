@@ -66,7 +66,7 @@ func processJPEG(infile io.Reader, outfile io.Writer) error {
 				if err != nil {
 					return err
 				}
-				tree.Tree.Fix()
+				tree.TIFF.Fix()
 				app1 := make([]byte, exif.HeaderSize+tree.TreeSize())
 				next := exif.PutHeader(app1)
 				_, err = tree.Put(app1[next:])
