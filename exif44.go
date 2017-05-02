@@ -297,7 +297,7 @@ type Exif struct {
 func GetExifTree(buf []byte) (*Exif, error) {
 	valid, order, ifdpos := tiff.GetHeader(buf)
 	if !valid {
-		return nil, errors.New("GetExif: Invalid Tiff header")
+		return nil, errors.New("GetExifTree: Invalid Tiff header")
 	}
 	node, err := tiff.GetIFDTree(buf, order, ifdpos, tiff.TIFFSpace)
 	if err != nil {
