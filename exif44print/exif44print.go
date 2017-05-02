@@ -73,7 +73,9 @@ func processJPEG(file io.Reader, maxLen uint32) error {
 		if marker == jseg.APP0+1 {
 			isExif, next := exif.GetHeader(buf)
 			if isExif {
-				scanTIFF(buf[next:], maxLen)
+				if err := scanTIFF(buf[next:], maxLen); err != nil {
+					return err
+				}
 			}
 		}
 	}
