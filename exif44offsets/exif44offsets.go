@@ -158,7 +158,9 @@ func scanTIFF(buf []byte, offset int64) error {
 	}
 	positions := make([]position, 1, 50)
 	positions[0] = position{0, tiff.HeaderSize, 0, tiff.TIFFSpace, usageHeader}
-	scanTree(buf, order, ifdPos, tiff.TIFFSpace, &positions)
+	if err := scanTree(buf, order, ifdPos, tiff.TIFFSpace, &positions); err != nil  {
+		return err
+	}
 	print(offset, positions, uint32(len(buf)))
 	return nil
 }
@@ -192,7 +194,9 @@ func processJPEG(file io.ReadSeeker) error {
 		if marker == jseg.APP0+1 {
 			isExif, next := exif.GetHeader(buf)
 			if isExif {
-				scanTIFF(buf[next:], offset+exif.HeaderSize)
+				if err := scanTIFF(buf[next:], offset+exif.HeaderSize); err != nil {
+					return err
+				}
 			}
 		}
 	}
