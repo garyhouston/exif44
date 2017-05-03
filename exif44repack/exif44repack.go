@@ -51,14 +51,6 @@ func processJPEG(infile io.Reader, outfile io.Writer) error {
 		if err != nil {
 			return err
 		}
-		if marker == jseg.SOS {
-			// Start of scan data, no more metadata expected.
-			if err := dumper.Dump(marker, nil); err != nil {
-				return err
-			}
-			_, err := io.Copy(outfile, infile)
-			return err
-		}
 		if marker == jseg.APP0+1 {
 			isExif, next := exif.GetHeader(buf)
 			if isExif {
@@ -78,6 +70,11 @@ func processJPEG(infile io.Reader, outfile io.Writer) error {
 
 		}
 		if err := dumper.Dump(marker, buf); err != nil {
+			return err
+		}
+		if marker == jseg.SOS {
+			// Start of scan data, no more metadata expected.
+			_, err := io.Copy(outfile, infile)
 			return err
 		}
 	}
