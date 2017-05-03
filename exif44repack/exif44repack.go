@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	exif "github.com/garyhouston/exif44"
-	jseg "github.com/garyhouston/jpegsegs"
-	tiff "github.com/garyhouston/tiff66"
 	"io"
 	"io/ioutil"
+	jseg "github.com/garyhouston/jpegsegs"
+	tiff "github.com/garyhouston/tiff66"
 	"log"
 	"os"
 )
@@ -56,7 +56,7 @@ func processJPEG(infile io.Reader, outfile io.Writer) error {
 			if err := dumper.Dump(marker, nil); err != nil {
 				return err
 			}
-			err := dumper.Copy(scanner)
+			_, err := io.Copy(outfile, infile)
 			return err
 		}
 		if marker == jseg.APP0+1 {
