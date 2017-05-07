@@ -56,7 +56,7 @@ func processTIFF(file io.Reader, maxLen uint32) error {
 	return scanTIFF(buf, maxLen)
 }
 
-func processJPEG(file io.Reader, maxLen uint32) error {
+func processJPEG(file io.ReadSeeker, maxLen uint32) error {
 	scanner, err := jseg.NewScanner(file)
 	if err != nil {
 		return err

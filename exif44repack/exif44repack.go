@@ -37,7 +37,7 @@ func processTIFF(infile io.Reader, outfile io.Writer) error {
 	return err
 }
 
-func processJPEG(infile io.Reader, outfile io.Writer) error {
+func processJPEG(infile io.ReadSeeker, outfile io.WriteSeeker) error {
 	scanner, err := jseg.NewScanner(infile)
 	if err != nil {
 		return err
