@@ -56,8 +56,10 @@ func processTIFF(file io.Reader, maxLen uint32) error {
 	return scanTIFF(buf, maxLen)
 }
 
-func processJPEG(file io.ReadSeeker, maxLen uint32) error {
-	scanner, err := jseg.NewScanner(file)
+// Process a single image in a JPEG file. A file using the
+// Multi-Picture Format extension will contain multiple images.
+func processImage(reader io.ReadSeeker, maxLen uint32, mpfProcessor jseg.MPFProcessor) error {
+	scanner, err := jseg.NewScanner(reader)
 	if err != nil {
 		return err
 	}
@@ -78,7 +80,44 @@ func processJPEG(file io.ReadSeeker, maxLen uint32) error {
 				}
 			}
 		}
+		if marker == jseg.APP0+2 {
+			_, _, err := mpfProcessor.ProcessAPP2(nil, reader, buf)
+			if err != nil {
+				return err
+			}
+		}
 	}
+}
+
+// State for the MPF image iterator.
+type scanData struct {
+	maxLen uint32
+}
+
+// Function to be applied to each MPF image.
+func (scan *scanData) MPFApply(reader io.ReadSeeker, index uint32, length uint32) error {
+	if index > 0 {
+		fmt.Println()
+		fmt.Println("== Processing Image ", index+1, "==")
+		return processImage(reader, scan.maxLen, &jseg.MPFCheck{})
+	}
+	return nil
+}
+
+// Process a JPEG file.
+func processJPEG(file io.ReadSeeker, maxLen uint32) error {
+	var index jseg.MPFGetIndex
+	if err := processImage(file, maxLen, &index); err != nil {
+		return err
+	}
+	if index.Index != nil {
+		scandata := &scanData{maxLen}
+		err := index.Index.ImageIterate(file, scandata)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return nil
 }
 
 const (
