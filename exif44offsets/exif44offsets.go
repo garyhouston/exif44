@@ -158,13 +158,14 @@ func scanTIFF(buf []byte, offset int64) error {
 	}
 	positions := make([]position, 1, 50)
 	positions[0] = position{0, tiff.HeaderSize, 0, tiff.TIFFSpace, usageHeader}
-	if err := scanTree(buf, order, ifdPos, tiff.TIFFSpace, &positions); err != nil  {
+	if err := scanTree(buf, order, ifdPos, tiff.TIFFSpace, &positions); err != nil {
 		return err
 	}
 	print(offset, positions, uint32(len(buf)))
 	return nil
 }
 
+// Process a TIFF file.
 func processTIFF(file io.Reader) error {
 	buf, err := ioutil.ReadAll(file)
 	if err != nil {
@@ -173,13 +174,15 @@ func processTIFF(file io.Reader) error {
 	return scanTIFF(buf, 0)
 }
 
-func processJPEG(file io.ReadSeeker) error {
-	scanner, err := jseg.NewScanner(file)
+// Process a single image in a JPEG file. A file using the
+// Multi-Picture Format extension will contain multiple images.
+func processImage(reader io.ReadSeeker, mpfProcessor jseg.MPFProcessor) error {
+	scanner, err := jseg.NewScanner(reader)
 	if err != nil {
 		return err
 	}
 	for {
-		offset, err := file.Seek(0, io.SeekCurrent)
+		offset, err := reader.Seek(0, io.SeekCurrent)
 		if err != nil {
 			return err
 		}
@@ -199,7 +202,42 @@ func processJPEG(file io.ReadSeeker) error {
 				}
 			}
 		}
+		if marker == jseg.APP0+2 {
+			_, _, err := mpfProcessor.ProcessAPP2(nil, reader, buf)
+			if err != nil {
+				return err
+			}
+		}
 	}
+}
+
+// State for the MPF image iterator.
+type scanData struct {
+}
+
+// Function to be applied to each MPF image.
+func (scan *scanData) MPFApply(reader io.ReadSeeker, index uint32, length uint32) error {
+	if index > 0 {
+		fmt.Println()
+		fmt.Println("== Processing Image ", index+1, "==")
+		return processImage(reader, &jseg.MPFCheck{})
+	}
+	return nil
+}
+
+// Process a JPEG file.
+func processJPEG(file io.ReadSeeker) error {
+	var index jseg.MPFGetIndex
+	if err := processImage(file, &index); err != nil {
+		return err
+	}
+	if index.Index != nil {
+		err := index.Index.ImageIterate(file, &scanData{})
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return nil
 }
 
 const (
