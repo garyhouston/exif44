@@ -4,7 +4,7 @@ import (
 	tiff "github.com/garyhouston/tiff66"
 )
 
-// Tag names are from ExifTool 10.49, which also has information about
+// Tag names are from ExifTool 10.56, which also has information about
 // how to interpret the values.
 
 // Tags in the "Panasonic 1" maker note.
@@ -212,4 +212,31 @@ var Panasonic1TagNames = map[tiff.Tag]string{
 	Panasonic1TextStamp4:                 "TextStamp4",
 	Panasonic1BabyAge2:                   "BabyAge2",
 	Panasonic1Transform2:                 "Transform2",
+}
+
+// Tags in the "Nikon 1" maker note, used in early digital cameras
+// such as Coolpix 700, 800, 900 and 950. Exiftool calls it Type 2,
+// other sites call it Type 1.  Exiftool: lib/Image/ExifTool/Nikon.pm,
+// %Image::ExifTool::Nikon::Type2
+const (
+	Nikon1Quality         = 0x3
+	Nikon1ColorMode       = 0x4
+	Nikon1ImageAdjustment = 0x5
+	Nikon1CCDSensitivity  = 0x6
+	Nikon1WhiteBalance    = 0x7
+	Nikon1Focus           = 0x8
+	Nikon1DigitalZoom     = 0xA
+	Nikon1Converter       = 0xB
+)
+
+// Mapping from Nikon 1 tags to strings.
+var Nikon1TagNames = map[tiff.Tag]string{
+	Nikon1Quality:         "Quality",
+	Nikon1ColorMode:       "ColorMode",
+	Nikon1ImageAdjustment: "ImageAdjustment",
+	Nikon1CCDSensitivity:  "CCDSensitivity",
+	Nikon1WhiteBalance:    "WhiteBalance",
+	Nikon1Focus:           "Focus",
+	Nikon1DigitalZoom:     "DigitalZoom",
+	Nikon1Converter:       "Converter",
 }
