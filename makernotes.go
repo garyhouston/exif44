@@ -10,206 +10,206 @@ import (
 // Tags in the "Panasonic 1" maker note.
 // ExifTool lib/Image/ExifTool/Panasonic.pm
 const (
-	Pan1ImageQuality               = 0x1
-	Pan1FirmwareVersion            = 0x2
-	Pan1WhiteBalance               = 0x3
-	Pan1FocusMode                  = 0x7
-	Pan1AFAreaMode                 = 0xF
-	Pan1ImageStabilization         = 0x1A
-	Pan1MacroMode                  = 0x1C
-	Pan1ShootingMode               = 0x1F
-	Pan1Audio                      = 0x20
-	Pan1DataDump                   = 0x21
-	Pan1WhiteBalanceBias           = 0x23
-	Pan1FlashBias                  = 0x24
-	Pan1InternalSerialNumber       = 0x25
-	Pan1PanasonicExifVersion       = 0x26
-	Pan1ColorEffect                = 0x28
-	Pan1TimeSincePowerOn           = 0x29
-	Pan1BurstMode                  = 0x2A
-	Pan1SequenceNumber             = 0x2B
-	Pan1ContrastMode               = 0x2C
-	Pan1NoiseReduction             = 0x2D
-	Pan1SelfTimer                  = 0x2E
-	Pan1Rotation                   = 0x30
-	Pan1AFAssistLamp               = 0x31
-	Pan1ColorMode                  = 0x32
-	Pan1BabyAge1                   = 0x33
-	Pan1OpticalZoomMode            = 0x34
-	Pan1ConversionLens             = 0x35
-	Pan1TravelDay                  = 0x36
-	Pan1Contrast                   = 0x39
-	Pan1WorldTimeLocation          = 0x3A
-	Pan1TextStamp1                 = 0x3B
-	Pan1ProgramISO                 = 0x3C
-	Pan1AdvancedSceneType          = 0x3D
-	Pan1TextStamp2                 = 0x3E
-	Pan1FacesDetected              = 0x3F
-	Pan1Saturation                 = 0x40
-	Pan1Sharpness                  = 0x41
-	Pan1FilmMode                   = 0x42
-	Pan1ColorTempKelvin            = 0x44
-	Pan1BracketSettings            = 0x45
-	Pan1WBShiftAB                  = 0x46
-	Pan1WBShiftGM                  = 0x47
-	Pan1FlashCurtain               = 0x48
-	Pan1LongExposureNoiseReduction = 0x49
-	Pan1PanasonicImageWidth        = 0x4B
-	Pan1PanasonicImageHeight       = 0x4C
-	Pan1AFPointPosition            = 0x4D
-	Pan1FaceDetInfo                = 0x4E
-	Pan1LensType                   = 0x51
-	Pan1LensSerialNumber           = 0x52
-	Pan1AccessoryType              = 0x53
-	Pan1AccessorySerialNumber      = 0x54
-	Pan1Transform1                 = 0x59
-	Pan1IntelligentExposure        = 0x5D
-	Pan1LensFirmwareVersion        = 0x60
-	Pan1FaceRecInfo                = 0x61
-	Pan1FlashWarning               = 0x62
-	Pan1RecognizedFaceFlags        = 0x63
-	Pan1Title                      = 0x65
-	Pan1BabyName                   = 0x66
-	Pan1Location                   = 0x67
-	Pan1Country                    = 0x69
-	Pan1State                      = 0x6B
-	Pan1City1                      = 0x6D
-	Pan1Landmark                   = 0x6F
-	Pan1IntelligentResolution      = 0x70
-	Pan1BurstSpeed                 = 0x77
-	Pan1IntelligentDRange          = 0x79
-	Pan1ClearRetouch               = 0x7C
-	Pan1City2                      = 0x80
-	Pan1ManometerPressure          = 0x86
-	Pan1PhotoStyle                 = 0x89
-	Pan1ShadingCompensation        = 0x8A
-	Pan1AccelerometerZ             = 0x8C
-	Pan1AccelerometerX             = 0x8D
-	Pan1AccelerometerY             = 0x8E
-	Pan1CameraOrientation          = 0x8F
-	Pan1RollAngle                  = 0x90
-	Pan1PitchAngle                 = 0x91
-	Pan1SweepPanoramaDirection     = 0x93
-	Pan1SweepPanoramaFieldOfView   = 0x94
-	Pan1TimerRecording             = 0x96
-	Pan1InternalNDFilter           = 0x9D
-	Pan1HDR                        = 0x9E
-	Pan1ShutterType                = 0x9F
-	Pan1ClearRetouchValue          = 0xA3
-	Pan1TouchAE                    = 0xAB
-	Pan1TimeStamp                  = 0xAF
-	Pan1PrintIM                    = 0xE00
-	Pan1MakerNoteVersion           = 0x8000
-	Pan1SceneMode                  = 0x8001
-	Pan1WBRedLevel                 = 0x8004
-	Pan1WBGreenLevel               = 0x8005
-	Pan1WBBlueLevel                = 0x8006
-	Pan1FlashFired                 = 0x8007
-	Pan1TextStamp3                 = 0x8008
-	Pan1TextStamp4                 = 0x8009
-	Pan1BabyAge2                   = 0x8010
-	Pan1Transform2                 = 0x8012
+	Panasonic1ImageQuality               = 0x1
+	Panasonic1FirmwareVersion            = 0x2
+	Panasonic1WhiteBalance               = 0x3
+	Panasonic1FocusMode                  = 0x7
+	Panasonic1AFAreaMode                 = 0xF
+	Panasonic1ImageStabilization         = 0x1A
+	Panasonic1MacroMode                  = 0x1C
+	Panasonic1ShootingMode               = 0x1F
+	Panasonic1Audio                      = 0x20
+	Panasonic1DataDump                   = 0x21
+	Panasonic1WhiteBalanceBias           = 0x23
+	Panasonic1FlashBias                  = 0x24
+	Panasonic1InternalSerialNumber       = 0x25
+	Panasonic1PanasonicExifVersion       = 0x26
+	Panasonic1ColorEffect                = 0x28
+	Panasonic1TimeSincePowerOn           = 0x29
+	Panasonic1BurstMode                  = 0x2A
+	Panasonic1SequenceNumber             = 0x2B
+	Panasonic1ContrastMode               = 0x2C
+	Panasonic1NoiseReduction             = 0x2D
+	Panasonic1SelfTimer                  = 0x2E
+	Panasonic1Rotation                   = 0x30
+	Panasonic1AFAssistLamp               = 0x31
+	Panasonic1ColorMode                  = 0x32
+	Panasonic1BabyAge1                   = 0x33
+	Panasonic1OpticalZoomMode            = 0x34
+	Panasonic1ConversionLens             = 0x35
+	Panasonic1TravelDay                  = 0x36
+	Panasonic1Contrast                   = 0x39
+	Panasonic1WorldTimeLocation          = 0x3A
+	Panasonic1TextStamp1                 = 0x3B
+	Panasonic1ProgramISO                 = 0x3C
+	Panasonic1AdvancedSceneType          = 0x3D
+	Panasonic1TextStamp2                 = 0x3E
+	Panasonic1FacesDetected              = 0x3F
+	Panasonic1Saturation                 = 0x40
+	Panasonic1Sharpness                  = 0x41
+	Panasonic1FilmMode                   = 0x42
+	Panasonic1ColorTempKelvin            = 0x44
+	Panasonic1BracketSettings            = 0x45
+	Panasonic1WBShiftAB                  = 0x46
+	Panasonic1WBShiftGM                  = 0x47
+	Panasonic1FlashCurtain               = 0x48
+	Panasonic1LongExposureNoiseReduction = 0x49
+	Panasonic1PanasonicImageWidth        = 0x4B
+	Panasonic1PanasonicImageHeight       = 0x4C
+	Panasonic1AFPointPosition            = 0x4D
+	Panasonic1FaceDetInfo                = 0x4E
+	Panasonic1LensType                   = 0x51
+	Panasonic1LensSerialNumber           = 0x52
+	Panasonic1AccessoryType              = 0x53
+	Panasonic1AccessorySerialNumber      = 0x54
+	Panasonic1Transform1                 = 0x59
+	Panasonic1IntelligentExposure        = 0x5D
+	Panasonic1LensFirmwareVersion        = 0x60
+	Panasonic1FaceRecInfo                = 0x61
+	Panasonic1FlashWarning               = 0x62
+	Panasonic1RecognizedFaceFlags        = 0x63
+	Panasonic1Title                      = 0x65
+	Panasonic1BabyName                   = 0x66
+	Panasonic1Location                   = 0x67
+	Panasonic1Country                    = 0x69
+	Panasonic1State                      = 0x6B
+	Panasonic1City1                      = 0x6D
+	Panasonic1Landmark                   = 0x6F
+	Panasonic1IntelligentResolution      = 0x70
+	Panasonic1BurstSpeed                 = 0x77
+	Panasonic1IntelligentDRange          = 0x79
+	Panasonic1ClearRetouch               = 0x7C
+	Panasonic1City2                      = 0x80
+	Panasonic1ManometerPressure          = 0x86
+	Panasonic1PhotoStyle                 = 0x89
+	Panasonic1ShadingCompensation        = 0x8A
+	Panasonic1AccelerometerZ             = 0x8C
+	Panasonic1AccelerometerX             = 0x8D
+	Panasonic1AccelerometerY             = 0x8E
+	Panasonic1CameraOrientation          = 0x8F
+	Panasonic1RollAngle                  = 0x90
+	Panasonic1PitchAngle                 = 0x91
+	Panasonic1SweepPanoramaDirection     = 0x93
+	Panasonic1SweepPanoramaFieldOfView   = 0x94
+	Panasonic1TimerRecording             = 0x96
+	Panasonic1InternalNDFilter           = 0x9D
+	Panasonic1HDR                        = 0x9E
+	Panasonic1ShutterType                = 0x9F
+	Panasonic1ClearRetouchValue          = 0xA3
+	Panasonic1TouchAE                    = 0xAB
+	Panasonic1TimeStamp                  = 0xAF
+	Panasonic1PrintIM                    = 0xE00
+	Panasonic1MakerNoteVersion           = 0x8000
+	Panasonic1SceneMode                  = 0x8001
+	Panasonic1WBRedLevel                 = 0x8004
+	Panasonic1WBGreenLevel               = 0x8005
+	Panasonic1WBBlueLevel                = 0x8006
+	Panasonic1FlashFired                 = 0x8007
+	Panasonic1TextStamp3                 = 0x8008
+	Panasonic1TextStamp4                 = 0x8009
+	Panasonic1BabyAge2                   = 0x8010
+	Panasonic1Transform2                 = 0x8012
 )
 
 // Mapping from Panasonic 1 tags to strings.
 var Panasonic1TagNames = map[tiff.Tag]string{
-	Pan1ImageQuality:               "ImageQuality",
-	Pan1FirmwareVersion:            "FirmwareVersion",
-	Pan1WhiteBalance:               "WhiteBalance",
-	Pan1FocusMode:                  "FocusMode",
-	Pan1AFAreaMode:                 "AFAreaMode",
-	Pan1ImageStabilization:         "ImageStabilization",
-	Pan1MacroMode:                  "MacroMode",
-	Pan1ShootingMode:               "ShootingMode",
-	Pan1Audio:                      "Audio",
-	Pan1DataDump:                   "DataDump",
-	Pan1WhiteBalanceBias:           "WhiteBalanceBias",
-	Pan1FlashBias:                  "FlashBias",
-	Pan1InternalSerialNumber:       "InternalSerialNumber",
-	Pan1PanasonicExifVersion:       "PanasonicExifVersion",
-	Pan1ColorEffect:                "ColorEffect",
-	Pan1TimeSincePowerOn:           "TimeSincePowerOn",
-	Pan1BurstMode:                  "BurstMode",
-	Pan1SequenceNumber:             "SequenceNumber",
-	Pan1ContrastMode:               "ContrastMode",
-	Pan1NoiseReduction:             "NoiseReduction",
-	Pan1SelfTimer:                  "SelfTimer",
-	Pan1Rotation:                   "Rotation",
-	Pan1AFAssistLamp:               "AFAssistLamp",
-	Pan1ColorMode:                  "ColorMode",
-	Pan1BabyAge1:                   "BabyAge1",
-	Pan1OpticalZoomMode:            "OpticalZoomMode",
-	Pan1ConversionLens:             "ConversionLens",
-	Pan1TravelDay:                  "TravelDay",
-	Pan1Contrast:                   "Contrast",
-	Pan1WorldTimeLocation:          "WorldTimeLocation",
-	Pan1TextStamp1:                 "TextStamp1",
-	Pan1ProgramISO:                 "ProgramISO",
-	Pan1AdvancedSceneType:          "AdvancedSceneType",
-	Pan1TextStamp2:                 "TextStamp2",
-	Pan1FacesDetected:              "FacesDetected",
-	Pan1Saturation:                 "Saturation",
-	Pan1Sharpness:                  "Sharpness",
-	Pan1FilmMode:                   "FilmMode",
-	Pan1ColorTempKelvin:            "ColorTempKelvin",
-	Pan1BracketSettings:            "BracketSettings",
-	Pan1WBShiftAB:                  "WBShiftAB",
-	Pan1WBShiftGM:                  "WBShiftGM",
-	Pan1FlashCurtain:               "FlashCurtain",
-	Pan1LongExposureNoiseReduction: "LongExposureNoiseReduction",
-	Pan1PanasonicImageWidth:        "PanasonicImageWidth",
-	Pan1PanasonicImageHeight:       "PanasonicImageHeight",
-	Pan1AFPointPosition:            "AFPointPosition",
-	Pan1FaceDetInfo:                "FaceDetInfo",
-	Pan1LensType:                   "LensType",
-	Pan1LensSerialNumber:           "LensSerialNumber",
-	Pan1AccessoryType:              "AccessoryType",
-	Pan1AccessorySerialNumber:      "AccessorySerialNumber",
-	Pan1Transform1:                 "Transform1",
-	Pan1IntelligentExposure:        "IntelligentExposure",
-	Pan1LensFirmwareVersion:        "LensFirmwareVersion",
-	Pan1FaceRecInfo:                "FaceRecInfo",
-	Pan1FlashWarning:               "FlashWarning",
-	Pan1RecognizedFaceFlags:        "RecognizedFaceFlags",
-	Pan1Title:                      "Title",
-	Pan1BabyName:                   "BabyName",
-	Pan1Location:                   "Location",
-	Pan1Country:                    "Country",
-	Pan1State:                      "State",
-	Pan1City1:                      "City1",
-	Pan1Landmark:                   "Landmark",
-	Pan1IntelligentResolution:      "IntelligentResolution",
-	Pan1BurstSpeed:                 "BurstSpeed",
-	Pan1IntelligentDRange:          "IntelligentD-Range",
-	Pan1ClearRetouch:               "ClearRetouch",
-	Pan1City2:                      "City2",
-	Pan1ManometerPressure:          "ManometerPressure",
-	Pan1PhotoStyle:                 "PhotoStyle",
-	Pan1ShadingCompensation:        "ShadingCompensation",
-	Pan1AccelerometerZ:             "AccelerometerZ",
-	Pan1AccelerometerX:             "AccelerometerX",
-	Pan1AccelerometerY:             "AccelerometerY",
-	Pan1CameraOrientation:          "CameraOrientation",
-	Pan1RollAngle:                  "RollAngle",
-	Pan1PitchAngle:                 "PitchAngle",
-	Pan1SweepPanoramaDirection:     "SweepPanoramaDirection",
-	Pan1SweepPanoramaFieldOfView:   "SweepPanoramaFieldOfView",
-	Pan1TimerRecording:             "TimerRecording",
-	Pan1InternalNDFilter:           "InternalNDFilter",
-	Pan1HDR:                        "HDR",
-	Pan1ShutterType:                "ShutterType",
-	Pan1ClearRetouchValue:          "ClearRetouchValue",
-	Pan1TouchAE:                    "TouchAE",
-	Pan1TimeStamp:                  "TimeStamp",
-	Pan1PrintIM:                    "PrintIM",
-	Pan1MakerNoteVersion:           "MakerNoteVersion",
-	Pan1SceneMode:                  "SceneMode",
-	Pan1WBRedLevel:                 "WBRedLevel",
-	Pan1WBGreenLevel:               "WBGreenLevel",
-	Pan1WBBlueLevel:                "WBBlueLevel",
-	Pan1FlashFired:                 "FlashFired",
-	Pan1TextStamp3:                 "TextStamp3",
-	Pan1TextStamp4:                 "TextStamp4",
-	Pan1BabyAge2:                   "BabyAge2",
-	Pan1Transform2:                 "Transform2",
+	Panasonic1ImageQuality:               "ImageQuality",
+	Panasonic1FirmwareVersion:            "FirmwareVersion",
+	Panasonic1WhiteBalance:               "WhiteBalance",
+	Panasonic1FocusMode:                  "FocusMode",
+	Panasonic1AFAreaMode:                 "AFAreaMode",
+	Panasonic1ImageStabilization:         "ImageStabilization",
+	Panasonic1MacroMode:                  "MacroMode",
+	Panasonic1ShootingMode:               "ShootingMode",
+	Panasonic1Audio:                      "Audio",
+	Panasonic1DataDump:                   "DataDump",
+	Panasonic1WhiteBalanceBias:           "WhiteBalanceBias",
+	Panasonic1FlashBias:                  "FlashBias",
+	Panasonic1InternalSerialNumber:       "InternalSerialNumber",
+	Panasonic1PanasonicExifVersion:       "PanasonicExifVersion",
+	Panasonic1ColorEffect:                "ColorEffect",
+	Panasonic1TimeSincePowerOn:           "TimeSincePowerOn",
+	Panasonic1BurstMode:                  "BurstMode",
+	Panasonic1SequenceNumber:             "SequenceNumber",
+	Panasonic1ContrastMode:               "ContrastMode",
+	Panasonic1NoiseReduction:             "NoiseReduction",
+	Panasonic1SelfTimer:                  "SelfTimer",
+	Panasonic1Rotation:                   "Rotation",
+	Panasonic1AFAssistLamp:               "AFAssistLamp",
+	Panasonic1ColorMode:                  "ColorMode",
+	Panasonic1BabyAge1:                   "BabyAge1",
+	Panasonic1OpticalZoomMode:            "OpticalZoomMode",
+	Panasonic1ConversionLens:             "ConversionLens",
+	Panasonic1TravelDay:                  "TravelDay",
+	Panasonic1Contrast:                   "Contrast",
+	Panasonic1WorldTimeLocation:          "WorldTimeLocation",
+	Panasonic1TextStamp1:                 "TextStamp1",
+	Panasonic1ProgramISO:                 "ProgramISO",
+	Panasonic1AdvancedSceneType:          "AdvancedSceneType",
+	Panasonic1TextStamp2:                 "TextStamp2",
+	Panasonic1FacesDetected:              "FacesDetected",
+	Panasonic1Saturation:                 "Saturation",
+	Panasonic1Sharpness:                  "Sharpness",
+	Panasonic1FilmMode:                   "FilmMode",
+	Panasonic1ColorTempKelvin:            "ColorTempKelvin",
+	Panasonic1BracketSettings:            "BracketSettings",
+	Panasonic1WBShiftAB:                  "WBShiftAB",
+	Panasonic1WBShiftGM:                  "WBShiftGM",
+	Panasonic1FlashCurtain:               "FlashCurtain",
+	Panasonic1LongExposureNoiseReduction: "LongExposureNoiseReduction",
+	Panasonic1PanasonicImageWidth:        "PanasonicImageWidth",
+	Panasonic1PanasonicImageHeight:       "PanasonicImageHeight",
+	Panasonic1AFPointPosition:            "AFPointPosition",
+	Panasonic1FaceDetInfo:                "FaceDetInfo",
+	Panasonic1LensType:                   "LensType",
+	Panasonic1LensSerialNumber:           "LensSerialNumber",
+	Panasonic1AccessoryType:              "AccessoryType",
+	Panasonic1AccessorySerialNumber:      "AccessorySerialNumber",
+	Panasonic1Transform1:                 "Transform1",
+	Panasonic1IntelligentExposure:        "IntelligentExposure",
+	Panasonic1LensFirmwareVersion:        "LensFirmwareVersion",
+	Panasonic1FaceRecInfo:                "FaceRecInfo",
+	Panasonic1FlashWarning:               "FlashWarning",
+	Panasonic1RecognizedFaceFlags:        "RecognizedFaceFlags",
+	Panasonic1Title:                      "Title",
+	Panasonic1BabyName:                   "BabyName",
+	Panasonic1Location:                   "Location",
+	Panasonic1Country:                    "Country",
+	Panasonic1State:                      "State",
+	Panasonic1City1:                      "City1",
+	Panasonic1Landmark:                   "Landmark",
+	Panasonic1IntelligentResolution:      "IntelligentResolution",
+	Panasonic1BurstSpeed:                 "BurstSpeed",
+	Panasonic1IntelligentDRange:          "IntelligentD-Range",
+	Panasonic1ClearRetouch:               "ClearRetouch",
+	Panasonic1City2:                      "City2",
+	Panasonic1ManometerPressure:          "ManometerPressure",
+	Panasonic1PhotoStyle:                 "PhotoStyle",
+	Panasonic1ShadingCompensation:        "ShadingCompensation",
+	Panasonic1AccelerometerZ:             "AccelerometerZ",
+	Panasonic1AccelerometerX:             "AccelerometerX",
+	Panasonic1AccelerometerY:             "AccelerometerY",
+	Panasonic1CameraOrientation:          "CameraOrientation",
+	Panasonic1RollAngle:                  "RollAngle",
+	Panasonic1PitchAngle:                 "PitchAngle",
+	Panasonic1SweepPanoramaDirection:     "SweepPanoramaDirection",
+	Panasonic1SweepPanoramaFieldOfView:   "SweepPanoramaFieldOfView",
+	Panasonic1TimerRecording:             "TimerRecording",
+	Panasonic1InternalNDFilter:           "InternalNDFilter",
+	Panasonic1HDR:                        "HDR",
+	Panasonic1ShutterType:                "ShutterType",
+	Panasonic1ClearRetouchValue:          "ClearRetouchValue",
+	Panasonic1TouchAE:                    "TouchAE",
+	Panasonic1TimeStamp:                  "TimeStamp",
+	Panasonic1PrintIM:                    "PrintIM",
+	Panasonic1MakerNoteVersion:           "MakerNoteVersion",
+	Panasonic1SceneMode:                  "SceneMode",
+	Panasonic1WBRedLevel:                 "WBRedLevel",
+	Panasonic1WBGreenLevel:               "WBGreenLevel",
+	Panasonic1WBBlueLevel:                "WBBlueLevel",
+	Panasonic1FlashFired:                 "FlashFired",
+	Panasonic1TextStamp3:                 "TextStamp3",
+	Panasonic1TextStamp4:                 "TextStamp4",
+	Panasonic1BabyAge2:                   "BabyAge2",
+	Panasonic1Transform2:                 "Transform2",
 }
