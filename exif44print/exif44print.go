@@ -17,13 +17,14 @@ import (
 func printTree(node *tiff.IFDNode, order binary.ByteOrder, length uint32) {
 	fmt.Println()
 	fields := node.Fields
-	fmt.Printf("%s IFD with %d ", node.Space.Name(), len(fields))
-	if len(fields) > 1 {
+	space := node.GetSpace()
+	fmt.Printf("%s IFD with %d ", space.Name(), len(fields))
+	if len(fields) != 1 {
 		fmt.Println("entries:")
 	} else {
 		fmt.Println("entry:")
 	}
-	names := exif.TagNameMap(node.Space)
+	names := exif.TagNameMap(space)
 	for i := 0; i < len(fields); i++ {
 		fields[i].Print(order, names, length)
 	}

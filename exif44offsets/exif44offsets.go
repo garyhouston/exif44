@@ -125,7 +125,7 @@ func scanTree(buf []byte, order binary.ByteOrder, ifdPos uint32, space tiff.TagS
 	for _, field := range ifd.Fields {
 		if field.IsIFD(space) {
 			for j := uint32(0); j < field.Count; j++ {
-				subspace := tiff.SubSpace(space, field.Tag)
+				subspace := space.SubSpace(field.Tag)
 				err := scanTree(buf, order, field.Long(j, order), subspace, positions)
 				if err != nil {
 					return err
