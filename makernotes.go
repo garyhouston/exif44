@@ -7,6 +7,299 @@ import (
 // Tag names are from ExifTool 10.56, which also has information about
 // how to interpret the values.
 
+// Tags in the "Nikon 1" maker note, used in early digital cameras
+// such as Coolpix 700, 800, 900 and 950. Exiftool calls it Type 2,
+// other sites call it Type 1.  Exiftool: lib/Image/ExifTool/Nikon.pm,
+// Image::ExifTool::Nikon::Type2.
+const (
+	Nikon1Quality         = 0x3
+	Nikon1ColorMode       = 0x4
+	Nikon1ImageAdjustment = 0x5
+	Nikon1CCDSensitivity  = 0x6
+	Nikon1WhiteBalance    = 0x7
+	Nikon1Focus           = 0x8
+	Nikon1DigitalZoom     = 0xA
+	Nikon1Converter       = 0xB
+)
+
+// Mapping from Nikon 1 tags to strings.
+var Nikon1TagNames = map[tiff.Tag]string{
+	Nikon1Quality:         "Quality",
+	Nikon1ColorMode:       "ColorMode",
+	Nikon1ImageAdjustment: "ImageAdjustment",
+	Nikon1CCDSensitivity:  "CCDSensitivity",
+	Nikon1WhiteBalance:    "WhiteBalance",
+	Nikon1Focus:           "Focus",
+	Nikon1DigitalZoom:     "DigitalZoom",
+	Nikon1Converter:       "Converter",
+}
+
+// Tags that are be used by Nikon since 2000 or so, such as in the
+// Coolpix 5000.  The maker note header may be missing for early
+// cameras, and has several versions otherwise.  Exiftool:
+// lib/Image/ExifTool/Nikon.pm, Image::ExifTool::Nikon::Main.
+
+const (
+	Nikon2MakerNoteVersion          = 0x1
+	Nikon2ISO                       = 0x2
+	Nikon2ColorMode                 = 0x3
+	Nikon2Quality                   = 0x4
+	Nikon2WhiteBalance              = 0x5
+	Nikon2Sharpness                 = 0x6
+	Nikon2FocusMode                 = 0x7
+	Nikon2FlashSetting              = 0x8
+	Nikon2FlashType                 = 0x9
+	Nikon2WhiteBalanceFineTune      = 0xB
+	Nikon2WBRBLevels                = 0XC
+	Nikon2ProgramShift              = 0XD
+	Nikon2ExposureDifference        = 0XE
+	Nikon2ISOSelection              = 0xF
+	Nikon2DataDump                  = 0x10
+	Nikon2PreviewIFD                = 0x11
+	Nikon2FlashExposureComp         = 0x12
+	Nikon2ISOSetting                = 0x13
+	Nikon2ColorBalanceA             = 0x14
+	Nikon2ImageBoundary             = 0x16
+	Nikon2ExternalFlashExposureComp = 0x17
+	Nikon2FlashExposureBracketVlaue = 0x18
+	Nikon2ExposureBracketValue      = 0x19
+	Nikon2ImageProcessing           = 0x1A
+	Nikon2CropHiSpeed               = 0x1B
+	Nikon2ExposureTuning            = 0x1C
+	Nikon2SerialNumber              = 0x1D
+	Nikon2ColorSpace                = 0x1E
+	Nikon2VRInfo                    = 0x1F
+	Nikon2ImageAuthentication       = 0x20
+	Nikon2FaceDetect                = 0x21
+	Nikon2ActiveDLighting           = 0x22
+	Nikon2PictureControlData        = 0x23
+	Nikon2WorldTime                 = 0x24
+	Nikon2ISOInfo                   = 0x25
+	Nikon2VignetteControl           = 0x2A
+	Nikon2DistortInfo               = 0x2B
+	Nikon2HDRInfo                   = 0x35
+	Nikon2LocationInfo              = 0x39
+	Nikon2BlackLevel                = 0x3D
+	Nikon2ImageAdjustment           = 0x80
+	Nikon2ToneComp                  = 0x81
+	Nikon2AuxiliaryLens             = 0x82
+	Nikon2LensType                  = 0x83
+	Nikon2Lens                      = 0x84
+	Nikon2ManualFocusDistance       = 0x85
+	Nikon2DigitalZoom               = 0x86
+	Nikon2FlashMode                 = 0x87
+	Nikon2AFInfo                    = 0x88
+	Nikon2ShootingMode              = 0x89
+	Nikon2LensFStops                = 0x8B
+	Nikon2ConstrastCurve            = 0x8C
+	Nikon2ColorHue                  = 0x8D
+	Nikon2SceneMode                 = 0x8F
+	Nikon2LightSource               = 0x90
+	Nikon2ShotInfo                  = 0x91
+	Nikon2HueAdjustment             = 0x92
+	Nikon2NEFCompression            = 0x93
+	Nikon2Saturation                = 0x94
+	Nikon2NoiseReduction            = 0x95
+	Nikon2NEFLinearizationTable     = 0x96
+	Nikon2ColorBalance              = 0x97
+	Nikon2LensData                  = 0x98
+	Nikon2RawImageCentre            = 0x99
+	Nikon2SensorPixelSize           = 0x9A
+	Nikon2SceneAssist               = 0x9C
+	Nikon2RetouchHistory            = 0x9E
+	Nikon2SerialNumber2             = 0xA0
+	Nikon2ImageDataSize             = 0xA2
+	Nikon2ImageCount                = 0xA5
+	Nikon2DeletedImageCount         = 0xA6
+	Nikon2ShutterCount              = 0xA7
+	Nikon2FlashInfo                 = 0xA8
+	Nikon2ImageOptimization         = 0xA9
+	Nikon2Saturation2               = 0xAA
+	Nikon2VariProgram               = 0xAB
+	Nikon2ImageStabilization        = 0xAC
+	Nikon2AFResponse                = 0xAD
+	Nikon2MultiExposure             = 0xB0
+	Nikon2HighISONoiseReduction     = 0xB1
+	Nikon2ToningEffect              = 0xB3
+	Nikon2PowerUpTime               = 0xB6
+	Nikon2AFInfo2                   = 0xB7
+	Nikon2FileInfo                  = 0xB8
+	Nikon2AFTune                    = 0xB9
+	Nikon2RetouchInfo               = 0xBB
+	Nikon2PictureControlData2       = 0xBD
+	Nikon2BarometerInfo             = 0xC3
+	Nikon2PrintIM                   = 0xE00
+	Nikon2NikonCaptureData          = 0xE01
+	Nikon2NikonCaptureVersion       = 0xE09
+	Nikon2NikonCaptureOffsets       = 0xE0E
+	Nikon2NikonScanIFD              = 0xE10
+	Nikon2NikonCaptureEditVersions  = 0xE13
+	Nikon2NikonICCProfile           = 0xE1D
+	Nikon2NikonCaptureOutput        = 0xE1E
+	Nikon2NEFBitDepth               = 0xE22
+)
+
+// Mapping from Nikon 2 tags to strings.
+var Nikon2TagNames = map[tiff.Tag]string{
+	Nikon2MakerNoteVersion:          "MakerNoteVersion",
+	Nikon2ISO:                       "ISO",
+	Nikon2ColorMode:                 "ColorMode",
+	Nikon2Quality:                   "Quality",
+	Nikon2WhiteBalance:              "WhiteBalance",
+	Nikon2Sharpness:                 "Sharpness",
+	Nikon2FocusMode:                 "FocusMode",
+	Nikon2FlashSetting:              "FlashSetting",
+	Nikon2FlashType:                 "FlashType",
+	Nikon2WhiteBalanceFineTune:      "WhiteBalanceFineTune",
+	Nikon2WBRBLevels:                "WB_RBLevels",
+	Nikon2ProgramShift:              "ProgramShift",
+	Nikon2ExposureDifference:        "ExposureDifference",
+	Nikon2ISOSelection:              "ISOSelection",
+	Nikon2DataDump:                  "DataDump",
+	Nikon2PreviewIFD:                "PreviewIFD",
+	Nikon2FlashExposureComp:         "FlashExposureComp",
+	Nikon2ISOSetting:                "ISOSetting",
+	Nikon2ColorBalanceA:             "ColorBalanceA",
+	Nikon2ImageBoundary:             "ImageBoundary",
+	Nikon2ExternalFlashExposureComp: "ExternalFlashExposureComp",
+	Nikon2FlashExposureBracketVlaue: "FlashExposureBracketVlaue",
+	Nikon2ExposureBracketValue:      "ExposureBracketValue",
+	Nikon2ImageProcessing:           "ImageProcessing",
+	Nikon2CropHiSpeed:               "CropHiSpeed",
+	Nikon2ExposureTuning:            "ExposureTuning",
+	Nikon2SerialNumber:              "SerialNumber",
+	Nikon2ColorSpace:                "ColorSpace",
+	Nikon2VRInfo:                    "VRInfo",
+	Nikon2ImageAuthentication:       "ImageAuthentication",
+	Nikon2FaceDetect:                "FaceDetect",
+	Nikon2ActiveDLighting:           "ActiveD-Lighting",
+	Nikon2PictureControlData:        "PictureControlData",
+	Nikon2WorldTime:                 "WorldTime",
+	Nikon2ISOInfo:                   "ISOInfo",
+	Nikon2VignetteControl:           "VignetteControl",
+	Nikon2DistortInfo:               "DistortInfo",
+	Nikon2HDRInfo:                   "HDRInfo",
+	Nikon2LocationInfo:              "LocationInfo",
+	Nikon2BlackLevel:                "BlackLevel",
+	Nikon2ImageAdjustment:           "ImageAdjustment",
+	Nikon2ToneComp:                  "ToneComp",
+	Nikon2AuxiliaryLens:             "AuxiliaryLens",
+	Nikon2LensType:                  "LensType",
+	Nikon2Lens:                      "Lens",
+	Nikon2ManualFocusDistance:       "ManualFocusDistance",
+	Nikon2DigitalZoom:               "DigitalZoom",
+	Nikon2FlashMode:                 "FlashMode",
+	Nikon2AFInfo:                    "AFInfo",
+	Nikon2ShootingMode:              "ShootingMode",
+	Nikon2LensFStops:                "LensFStops",
+	Nikon2ConstrastCurve:            "ConstrastCurve",
+	Nikon2ColorHue:                  "ColorHue",
+	Nikon2SceneMode:                 "SceneMode",
+	Nikon2LightSource:               "LightSource",
+	Nikon2ShotInfo:                  "ShotInfo",
+	Nikon2HueAdjustment:             "HueAdjustment",
+	Nikon2NEFCompression:            "NEFCompression",
+	Nikon2Saturation:                "Saturation",
+	Nikon2NoiseReduction:            "NoiseReduction",
+	Nikon2NEFLinearizationTable:     "NEFLinearizationTable",
+	Nikon2ColorBalance:              "ColorBalance",
+	Nikon2LensData:                  "LensData",
+	Nikon2RawImageCentre:            "RawImageCentre",
+	Nikon2SensorPixelSize:           "SensorPixelSize",
+	Nikon2SceneAssist:               "SceneAssist",
+	Nikon2RetouchHistory:            "RetouchHistory",
+	Nikon2SerialNumber2:             "SerialNumber2",
+	Nikon2ImageDataSize:             "ImageDataSize",
+	Nikon2ImageCount:                "ImageCount",
+	Nikon2DeletedImageCount:         "DeletedImageCount",
+	Nikon2ShutterCount:              "ShutterCount",
+	Nikon2FlashInfo:                 "FlashInfo",
+	Nikon2ImageOptimization:         "ImageOptimization",
+	Nikon2Saturation2:               "Saturation2",
+	Nikon2VariProgram:               "VariProgram",
+	Nikon2ImageStabilization:        "ImageStabilization",
+	Nikon2AFResponse:                "AFResponse",
+	Nikon2MultiExposure:             "MultiExposure",
+	Nikon2HighISONoiseReduction:     "HighISONoiseReduction",
+	Nikon2ToningEffect:              "ToningEffect",
+	Nikon2PowerUpTime:               "PowerUpTime",
+	Nikon2AFInfo2:                   "AFInfo2",
+	Nikon2FileInfo:                  "FileInfo",
+	Nikon2AFTune:                    "AFTune",
+	Nikon2RetouchInfo:               "RetouchInfo",
+	Nikon2PictureControlData2:       "PictureControlData2",
+	Nikon2BarometerInfo:             "BarometerInfo",
+	Nikon2PrintIM:                   "PrintIM",
+	Nikon2NikonCaptureData:          "NikonCaptureData",
+	Nikon2NikonCaptureVersion:       "NikonCaptureVersion",
+	Nikon2NikonCaptureOffsets:       "NikonCaptureOffsets",
+	Nikon2NikonScanIFD:              "NikonScanIFD",
+	Nikon2NikonCaptureEditVersions:  "NikonCaptureEditVersions",
+	Nikon2NikonICCProfile:           "NikonICCProfile",
+	Nikon2NikonCaptureOutput:        "NikonCaptureOutput",
+	Nikon2NEFBitDepth:               "NEFBitDepth",
+}
+
+// Tags in the "PreviewIFD" sub-IFD that may be found in Nikon 2 maker
+// notes.  Exiftool: lib/Image/ExifTool/Nikon.pm
+// Image::ExifTool::Nikon::PreviewIFD
+const (
+	Nikon2SubfileType        = 0xFE
+	Nikon2Compression        = 0x103
+	Nikon2XResolution        = 0x11A
+	Nikon2YResolution        = 0x11B
+	Nikon2YResolutionUnit    = 0x128
+	Nikon2PreviewImageStart  = 0x201
+	Nikon2PreviewImageLength = 0x202
+	Nikon2YCbCrPositioning   = 0x213
+)
+
+// Mapping from Nikon 2 Preview IFD tags to strings.
+var Nikon2PreviewIFDTagNames = map[tiff.Tag]string{
+	Nikon2SubfileType:        "SubfileType",
+	Nikon2Compression:        "Compression",
+	Nikon2XResolution:        "XResolution",
+	Nikon2YResolution:        "YResolution",
+	Nikon2YResolutionUnit:    "YResolutionUnit",
+	Nikon2PreviewImageStart:  "PreviewImageStart",
+	Nikon2PreviewImageLength: "PreviewImageLength",
+	Nikon2YCbCrPositioning:   "YCbCrPositioning",
+}
+
+// Tags in the "ScanIFD" sub-IFD that may be found in Nikon 2 maker
+// notes.  Exiftool: lib/Image/ExifTool/Nikon.pm
+// Image::ExifTool::Nikon::Scan
+const (
+	Nikon2FilmType               = 0x2
+	Nikon2MultiSample            = 0x40
+	Nikon2BitDepth               = 0x41
+	Nikon2MasterGain             = 0x50
+	Nikon2ColorGain              = 0x51
+	Nikon2ScanImageEnhancer      = 0x60
+	Nikon2DigitalICE             = 0x100
+	Nikon2ROCInfo                = 0x110
+	Nikon2GEMInfo                = 0x120
+	Nikon2DigitalDEEShadowAdj    = 0x200
+	Nikon2DigitalDEEThreshold    = 0x201
+	Nikon2DigitalDEEHighlightAdj = 0x202
+)
+
+// Mapping from Nikon 2 Scan IFD tags to strings.
+var Nikon2ScanIFDTagNames = map[tiff.Tag]string{
+	Nikon2FilmType:               "FilmType",
+	Nikon2MultiSample:            "MultiSample",
+	Nikon2BitDepth:               "BitDepth",
+	Nikon2MasterGain:             "MasterGain",
+	Nikon2ColorGain:              "ColorGain",
+	Nikon2ScanImageEnhancer:      "ScanImageEnhancer",
+	Nikon2DigitalICE:             "DigitalICE",
+	Nikon2ROCInfo:                "ROCInfo",
+	Nikon2GEMInfo:                "GEMInfo",
+	Nikon2DigitalDEEShadowAdj:    "DigitalDEEShadowAdj",
+	Nikon2DigitalDEEThreshold:    "DigitalDEEThreshold",
+	Nikon2DigitalDEEHighlightAdj: "DigitalDEEHighlightAdj",
+}
+
 // Tags in the "Panasonic 1" maker note.
 // ExifTool lib/Image/ExifTool/Panasonic.pm
 const (
@@ -212,31 +505,4 @@ var Panasonic1TagNames = map[tiff.Tag]string{
 	Panasonic1TextStamp4:                 "TextStamp4",
 	Panasonic1BabyAge2:                   "BabyAge2",
 	Panasonic1Transform2:                 "Transform2",
-}
-
-// Tags in the "Nikon 1" maker note, used in early digital cameras
-// such as Coolpix 700, 800, 900 and 950. Exiftool calls it Type 2,
-// other sites call it Type 1.  Exiftool: lib/Image/ExifTool/Nikon.pm,
-// %Image::ExifTool::Nikon::Type2
-const (
-	Nikon1Quality         = 0x3
-	Nikon1ColorMode       = 0x4
-	Nikon1ImageAdjustment = 0x5
-	Nikon1CCDSensitivity  = 0x6
-	Nikon1WhiteBalance    = 0x7
-	Nikon1Focus           = 0x8
-	Nikon1DigitalZoom     = 0xA
-	Nikon1Converter       = 0xB
-)
-
-// Mapping from Nikon 1 tags to strings.
-var Nikon1TagNames = map[tiff.Tag]string{
-	Nikon1Quality:         "Quality",
-	Nikon1ColorMode:       "ColorMode",
-	Nikon1ImageAdjustment: "ImageAdjustment",
-	Nikon1CCDSensitivity:  "CCDSensitivity",
-	Nikon1WhiteBalance:    "WhiteBalance",
-	Nikon1Focus:           "Focus",
-	Nikon1DigitalZoom:     "DigitalZoom",
-	Nikon1Converter:       "Converter",
 }
