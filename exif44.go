@@ -255,6 +255,12 @@ func TagNameMap(space tiff.TagSpace) map[tiff.Tag]string {
 		names = Panasonic1TagNames
 	case tiff.Nikon1Space:
 		names = Nikon1TagNames
+	case tiff.Nikon2Space:
+		names = Nikon2TagNames
+	case tiff.Nikon2PreviewSpace:
+		names = Nikon2PreviewIFDTagNames
+	case tiff.Nikon2ScanSpace:
+		names = Nikon2ScanIFDTagNames
 	}
 	return names
 }
@@ -308,16 +314,16 @@ func GetExifTree(buf []byte) (*Exif, error) {
 	exif := Exif{}
 	exif.TIFF = node
 	for _, sub := range node.SubIFDs {
-		if sub.Node.Space == tiff.ExifSpace {
+		if sub.Node.GetSpace() == tiff.ExifSpace {
 			exif.Exif = sub.Node
 			for _, esub := range sub.Node.SubIFDs {
-				if esub.Node.Space == tiff.InteropSpace {
+				if esub.Node.GetSpace() == tiff.InteropSpace {
 					exif.Interop = esub.Node
-				} else if esub.Node.Space.IsMakerNote() {
+				} else if esub.Node.IsMakerNote() {
 					exif.MakerNote = esub.Node
 				}
 			}
-		} else if sub.Node.Space == tiff.GPSSpace {
+		} else if sub.Node.GetSpace() == tiff.GPSSpace {
 			exif.GPS = sub.Node
 		}
 	}
