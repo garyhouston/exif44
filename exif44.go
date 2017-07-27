@@ -154,16 +154,23 @@ var ExifTagNames = map[tiff.Tag]string{
 	Gamma:                     "Gamma",
 }
 
-// Tags in the Interoperability IFD.
+// Tags in the Interoperability IFD, from "Design rule for Camera File
+// system: DCF Version 2.0 (Edition 2010)".
 const (
 	InteroperabilityIndex   = 0x1
 	InteroperabilityVersion = 0x2
+	RelatedImageFileFormat  = 0x1000
+	RelatedImageWidth       = 0x1001
+	RelatedImageLength      = 0x1002
 )
 
 // Mapping from Interoperability tags to strings.
 var InteropTagNames = map[tiff.Tag]string{
 	InteroperabilityIndex:   "InteroperabilityIndex",
 	InteroperabilityVersion: "InteroperabilityVersion",
+	RelatedImageFileFormat:  "RelatedImageFileFormat",
+	RelatedImageWidth:       "RelatedImageWidth",
+	RelatedImageLength:      "RelatedImageLength",
 }
 
 // Tags in the GPS IFD.
