@@ -258,6 +258,8 @@ func TagNameMap(space tiff.TagSpace) map[tiff.Tag]string {
 		names = InteropTagNames
 	case tiff.GPSSpace:
 		names = GPSTagNames
+	case tiff.Canon1Space:
+		names = Canon1TagNames
 	case tiff.Panasonic1Space:
 		names = Panasonic1TagNames
 	case tiff.Nikon1Space:

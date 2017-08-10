@@ -7,7 +7,169 @@ import (
 // Tag names are from ExifTool 10.56, which also has information about
 // how to interpret the values.
 
-// Tags in the "Nikon 1" maker note, used in early digital cameras
+// Tags in the Canon1 maker note, used for all Canon models.
+const (
+	Canon1CameraSettings             = 0x1
+	Canon1FocalLength                = 0x2
+	Canon1FlashInfo                  = 0x3
+	Canon1ShotInfo                   = 0x4
+	Canon1Panorama                   = 0x5
+	Canon1ImageType                  = 0x6
+	Canon1FirmwareVersion            = 0x7
+	Canon1FileNumber                 = 0x8
+	Canon1OwnerName                  = 0x9
+	Canon1SerialNumber               = 0xc
+	Canon1CameraInfo                 = 0xd
+	Canon1FileLength                 = 0xe
+	Canon1CustomFunctions            = 0xf
+	Canon1ModelID                    = 0x10
+	Canon1MovieInfo                  = 0x11
+	Canon1AFInfo                     = 0x12
+	Canon1ThumnailImageValidArea     = 0x13
+	Canon1SerialNumberFormat         = 0x15
+	Canon1SuperMacro                 = 0x1a
+	Canon1DateStampMode              = 0x1c
+	Canon1MyColors                   = 0x1d
+	Canon1FirmwareRevision           = 0x1e
+	Canon1Categories                 = 0x23
+	Canon1FaceDetect1                = 0x24
+	Canon1FaceDetect2                = 0x25
+	Canon1AFInfo2                    = 0x26
+	Canon1ContrastInfo               = 0x27
+	Canon1ImageUniqueID              = 0x28
+	Canon1FaceDetect3                = 0x2f
+	Canon1TimeInfo                   = 0x35
+	Canon1AFInfo3                    = 0x3c
+	Canon1RawDataOffset              = 0x81
+	Canon1OriginalDecisionDataOffset = 0x83
+	Canon1CustomFunctions1D          = 0x90
+	Canon1PersonalFunctions          = 0x91
+	Canon1PersonalFunctionValues     = 0x92
+	Canon1FileInfo                   = 0x93
+	Canon1AFPointsInFocus1D          = 0x94
+	Canon1LensModel                  = 0x95
+	Canon1InternalSerialNumber       = 0x96
+	Canon1DustRemovalData            = 0x97
+	Canon1CropInfo                   = 0x98
+	Canon1CustomFunctions2           = 0x99
+	Canon1AspectInfo                 = 0x9a
+	Canon1ProcessingInfo             = 0xa0
+	Canon1ToneCurveTable             = 0xa1
+	Canon1SharpnessTable             = 0xa2
+	Canon1SharpnessFreqTable         = 0xa3
+	Canon1WhiteBalanceTable          = 0xa4
+	Canon1ColorBalance               = 0xa9
+	Canon1MeasuredColor              = 0xaa
+	Canon1ColorTemperature           = 0xae
+	Canon1Flags                      = 0xb0
+	Canon1ModifiedInfo               = 0xb1
+	Canon1ToneCurveMatching          = 0xb2
+	Canon1WhiteBalanceMatching       = 0xb3
+	Canon1ColorSpace                 = 0xb4
+	Canon1PreviewImageInfo           = 0xb6
+	Canon1VRDOffset                  = 0xd0
+	Canon1SensorInfo                 = 0xe0
+	Canon1ColorData                  = 0x4001
+	Canon1CRWParam                   = 0x4002
+	Canon1ColorInfo                  = 0x4003
+	Canon1Flavor                     = 0x4005
+	Canon1PictureStyleUserDef        = 0x4008
+	Canon1PictureStylePC             = 0x4009
+	Canon1CustomPictureStyleFileName = 0x4010
+	Canon1AFMicroAdj                 = 0x4013
+	Canon1VignettingCorr             = 0x4015
+	Canon1VignettingCorr2            = 0x4016
+	Canon1LightingOpt                = 0x4018
+	Canon1LensInfo                   = 0x4019
+	Canon1AmbienceInfo               = 0x4020
+	Canon1MultiExp                   = 0x4021
+	Canon1FilterInfo                 = 0x4024
+	Canon1HDRInfo                    = 0x4025
+	Canon1AFConfig                   = 0x4028
+)
+
+// Mapping from Canon1 tags to strings.
+var Canon1TagNames = map[tiff.Tag]string{
+	Canon1CameraSettings:             "CameraSettings",
+	Canon1FocalLength:                "FocalLength",
+	Canon1FlashInfo:                  "FlashInfo",
+	Canon1ShotInfo:                   "ShotInfo",
+	Canon1Panorama:                   "Panorama",
+	Canon1ImageType:                  "ImageType",
+	Canon1FirmwareVersion:            "FirmwareVersion",
+	Canon1FileNumber:                 "FileNumber",
+	Canon1OwnerName:                  "OwnerName",
+	Canon1SerialNumber:               "SerialNumber",
+	Canon1CameraInfo:                 "CameraInfo",
+	Canon1FileLength:                 "FileLength",
+	Canon1CustomFunctions:            "CustomFunctions",
+	Canon1ModelID:                    "ModelID",
+	Canon1MovieInfo:                  "MovieInfo",
+	Canon1AFInfo:                     "AFInfo",
+	Canon1ThumnailImageValidArea:     "ThumnailImageValidArea",
+	Canon1SerialNumberFormat:         "SerialNumberFormat",
+	Canon1SuperMacro:                 "SuperMacro",
+	Canon1DateStampMode:              "DateStampMode",
+	Canon1MyColors:                   "MyColors",
+	Canon1FirmwareRevision:           "FirmwareRevision",
+	Canon1Categories:                 "Categories",
+	Canon1FaceDetect1:                "FaceDetect1",
+	Canon1FaceDetect2:                "FaceDetect2",
+	Canon1AFInfo2:                    "AFInfo2",
+	Canon1ContrastInfo:               "ContrastInfo",
+	Canon1ImageUniqueID:              "ImageUniqueID",
+	Canon1FaceDetect3:                "FaceDetect3",
+	Canon1TimeInfo:                   "TimeInfo",
+	Canon1AFInfo3:                    "AFInfo3",
+	Canon1RawDataOffset:              "RawDataOffset",
+	Canon1OriginalDecisionDataOffset: "OriginalDecisionDataOffset",
+	Canon1CustomFunctions1D:          "CustomFunctions1D",
+	Canon1PersonalFunctions:          "PersonalFunctions",
+	Canon1PersonalFunctionValues:     "PersonalFunctionValues",
+	Canon1FileInfo:                   "FileInfo",
+	Canon1AFPointsInFocus1D:          "AFPointsInFocus1D",
+	Canon1LensModel:                  "LensModel",
+	Canon1InternalSerialNumber:       "InternalSerialNumber",
+	Canon1DustRemovalData:            "DustRemovalData",
+	Canon1CropInfo:                   "CropInfo",
+	Canon1CustomFunctions2:           "CustomFunctions2",
+	Canon1AspectInfo:                 "AspectInfo",
+	Canon1ProcessingInfo:             "ProcessingInfo",
+	Canon1ToneCurveTable:             "ToneCurveTable",
+	Canon1SharpnessTable:             "SharpnessTable",
+	Canon1SharpnessFreqTable:         "SharpnessFreqTable",
+	Canon1WhiteBalanceTable:          "WhiteBalanceTable",
+	Canon1ColorBalance:               "ColorBalance",
+	Canon1MeasuredColor:              "MeasuredColor",
+	Canon1ColorTemperature:           "ColorTemperature",
+	Canon1Flags:                      "Flags",
+	Canon1ModifiedInfo:               "ModifiedInfo",
+	Canon1ToneCurveMatching:          "ToneCurveMatching",
+	Canon1WhiteBalanceMatching:       "WhiteBalanceMatching",
+	Canon1ColorSpace:                 "ColorSpace",
+	Canon1PreviewImageInfo:           "PreviewImageInfo",
+	Canon1VRDOffset:                  "VRDOffset",
+	Canon1SensorInfo:                 "SensorInfo",
+	Canon1ColorData:                  "ColorData",
+	Canon1CRWParam:                   "CRWParam",
+	Canon1ColorInfo:                  "ColorInfo",
+	Canon1Flavor:                     "Flavor",
+	Canon1PictureStyleUserDef:        "PictureStyleUserDef",
+	Canon1PictureStylePC:             "PictureStylePC",
+	Canon1CustomPictureStyleFileName: "CustomPictureStyleFileName",
+	Canon1AFMicroAdj:                 "AFMicroAdj",
+	Canon1VignettingCorr:             "VignettingCorr",
+	Canon1VignettingCorr2:            "VignettingCorr2",
+	Canon1LightingOpt:                "LightingOpt",
+	Canon1LensInfo:                   "LensInfo",
+	Canon1AmbienceInfo:               "AmbienceInfo",
+	Canon1MultiExp:                   "MultiExp",
+	Canon1FilterInfo:                 "FilterInfo",
+	Canon1HDRInfo:                    "HDRInfo",
+	Canon1AFConfig:                   "AFConfig",
+}
+
+// Tags in the Nikon1 maker note, used in early digital cameras
 // such as Coolpix 700, 800, 900 and 950. Exiftool calls it Type 2,
 // other sites call it Type 1.  Exiftool: lib/Image/ExifTool/Nikon.pm,
 // Image::ExifTool::Nikon::Type2.
@@ -22,7 +184,7 @@ const (
 	Nikon1Converter       = 0xB
 )
 
-// Mapping from Nikon 1 tags to strings.
+// Mapping from Nikon1 tags to strings.
 var Nikon1TagNames = map[tiff.Tag]string{
 	Nikon1Quality:         "Quality",
 	Nikon1ColorMode:       "ColorMode",
@@ -139,7 +301,7 @@ const (
 	Nikon2NEFBitDepth               = 0xE22
 )
 
-// Mapping from Nikon 2 tags to strings.
+// Mapping from Nikon2 tags to strings.
 var Nikon2TagNames = map[tiff.Tag]string{
 	Nikon2MakerNoteVersion:          "MakerNoteVersion",
 	Nikon2ISO:                       "ISO",
@@ -240,7 +402,7 @@ var Nikon2TagNames = map[tiff.Tag]string{
 	Nikon2NEFBitDepth:               "NEFBitDepth",
 }
 
-// Tags in the "PreviewIFD" sub-IFD that may be found in Nikon 2 maker
+// Tags in the "PreviewIFD" sub-IFD that may be found in Nikon2 maker
 // notes.  Exiftool: lib/Image/ExifTool/Nikon.pm
 // Image::ExifTool::Nikon::PreviewIFD
 const (
@@ -254,7 +416,7 @@ const (
 	Nikon2YCbCrPositioning   = 0x213
 )
 
-// Mapping from Nikon 2 Preview IFD tags to strings.
+// Mapping from Nikon2 Preview IFD tags to strings.
 var Nikon2PreviewIFDTagNames = map[tiff.Tag]string{
 	Nikon2SubfileType:        "SubfileType",
 	Nikon2Compression:        "Compression",
@@ -266,7 +428,7 @@ var Nikon2PreviewIFDTagNames = map[tiff.Tag]string{
 	Nikon2YCbCrPositioning:   "YCbCrPositioning",
 }
 
-// Tags in the "ScanIFD" sub-IFD that may be found in Nikon 2 maker
+// Tags in the "ScanIFD" sub-IFD that may be found in Nikon2 maker
 // notes.  Exiftool: lib/Image/ExifTool/Nikon.pm
 // Image::ExifTool::Nikon::Scan
 const (
@@ -284,7 +446,7 @@ const (
 	Nikon2DigitalDEEHighlightAdj = 0x202
 )
 
-// Mapping from Nikon 2 Scan IFD tags to strings.
+// Mapping from Nikon2 Scan IFD tags to strings.
 var Nikon2ScanIFDTagNames = map[tiff.Tag]string{
 	Nikon2FilmType:               "FilmType",
 	Nikon2MultiSample:            "MultiSample",
@@ -300,7 +462,7 @@ var Nikon2ScanIFDTagNames = map[tiff.Tag]string{
 	Nikon2DigitalDEEHighlightAdj: "DigitalDEEHighlightAdj",
 }
 
-// Tags in the "Panasonic 1" maker note.
+// Tags in the Panasonic1 maker note.
 // ExifTool lib/Image/ExifTool/Panasonic.pm
 const (
 	Panasonic1ImageQuality               = 0x1
@@ -404,7 +566,7 @@ const (
 	Panasonic1Transform2                 = 0x8012
 )
 
-// Mapping from Panasonic 1 tags to strings.
+// Mapping from Panasonic1 tags to strings.
 var Panasonic1TagNames = map[tiff.Tag]string{
 	Panasonic1ImageQuality:               "ImageQuality",
 	Panasonic1FirmwareVersion:            "FirmwareVersion",
