@@ -462,6 +462,703 @@ var Nikon2ScanIFDTagNames = map[tiff.Tag]string{
 	Nikon2DigitalDEEHighlightAdj: "DigitalDEEHighlightAdj",
 }
 
+// Tags in the Olympus1 maker note.
+// ExifTool lib/Image/ExifTool/Olympus.pm ::Main
+const (
+	Olympus1MakerNoteVersion = 0x0
+	Olympus1MinoltaCameraSettingsOld = 0x1
+	Olympus1MinoltaCameraSettings = 0x3
+	Olympus1CompressedImageSize = 0x40
+	Olympus1PreviewImageData = 0x81
+	Olympus1PreviewImageStart = 0x88
+	Olympus1PreviewImageLength = 0x89
+	Olympus1ThumbnailImage = 0x100
+	Olympus1BodyFirmwareVersion = 0x104
+	Olympus1SpecialMode = 0x200
+	Olympus1Quality = 0x201
+	Olympus1Macro = 0x202
+	Olympus1BWMode = 0x203
+	Olympus1DigitalZoom = 0x204
+	Olympus1FocalPlaneDiagonal = 0x205
+	Olympus1LensDistortionParams = 0x206
+	Olympus1CameraType = 0x207
+	Olympus1TextInfo = 0x208
+	Olympus1CameraID = 0x209
+	Olympus1EpsonImageWidth = 0x20B
+	Olympus1EpsonImageHeight = 0x20C
+	Olympus1EpsonSoftware = 0x20D
+	Olympus1Preview = 0x280
+	Olympus1PreCaptureFrames = 0x300
+	Olympus1WhiteBoard = 0x301
+	Olympus1OneTouchWB = 0x302
+	Olympus1WhiteBalanceBracket = 0x303
+	Olympus1WhiteBalanceBias = 0x304
+	Olympus1BlackLevel = 0x401
+	Olympus1SceneMode = 0x403
+	Olympus1SerialNumber = 0x404
+	Olympus1Firmware = 0x405
+	Olympus1PrintIM = 0xE00
+	Olympus1DataDump = 0xF00
+	Olympus1DataDump2 = 0xF01
+	Olympus1ZoomedPreviewStart = 0xF04
+	Olympus1ZoomedPreviewLength = 0xF05
+	Olympus1ZoomedPreviewSize = 0xF06
+	Olympus1ShutterSpeedValue = 0x1000
+	Olympus1ISOValue = 0x1001
+	Olympus1ApertureValue = 0x1002
+	Olympus1BrightnessValue = 0x1003
+	Olympus1FlashMode = 0x1004
+	Olympus1FlashDevice = 0x1005
+	Olympus1ExposureCompensation = 0x1006
+	Olympus1SensorTemperature = 0x1007
+	Olympus1LensTemperature = 0x1008
+	Olympus1LightCondition = 0x1009
+	Olympus1FocusRange = 0x100A
+	Olympus1FocusMode = 0x100B
+	Olympus1ManualFocusDistance = 0x100C
+	Olympus1ZoomStepCount = 0x100D
+	Olympus1FocusStepCount = 0x100E
+	Olympus1Sharpness = 0x100F
+	Olympus1FlashChargeLevel = 0x1010
+	Olympus1ColorMatrix = 0x1011
+	Olympus1BlackLevel2 = 0x1012
+	Olympus1ColorTemperatureBG = 0x1013
+	Olympus1ColorTemperatureRG = 0x1014
+	Olympus1WBMode = 0x1015
+	Olympus1RedBalance = 0x1017
+	Olympus1BlueBalance = 0x1018
+	Olympus1ColorMatrixNumber = 0x1019
+	Olympus1SerialNumber2 = 0x101A
+	Olympus1ExternalFlashAE1_0 = 0x101B
+	Olympus1ExternalFlashAE2_0 = 0x101C
+	Olympus1InternalFlashAE1_0 = 0x101D
+	Olympus1InternalFlashAE2_0 = 0x101E
+	Olympus1ExternalFlashAE1 = 0x101F
+	Olympus1ExternalFlashAE2 = 0x1020
+	Olympus1InternalFlashAE1 = 0x1021
+	Olympus1InternalFlashAE2 = 0x1022
+	Olympus1FlashExposureComp = 0x1023
+	Olympus1InternalFlashTable = 0x1024
+	Olympus1ExternalFlashGValue = 0x1025
+	Olympus1ExternalFlashBounce = 0x1026
+	Olympus1ExternalFlashZoom = 0x1027
+	Olympus1ExternalFlashMode = 0x1028
+	Olympus1Contrast = 0x1029
+	Olympus1SharpnessFactor = 0x102A
+	Olympus1ColorControl = 0x102B
+	Olympus1ValidBits = 0x102C
+	Olympus1CoringFilter = 0x102D
+	Olympus1OlympusImageWidth = 0x102E
+	Olympus1OlympusImageHeight = 0x102F
+	Olympus1SceneDetect = 0x1030
+	Olympus1SceneArea = 0x1031
+	Olympus1SceneDetectData = 0x1033
+	Olympus1CompressionRatio = 0x1034
+	Olympus1PreviewImageValid = 0x1035
+	Olympus1PreviewImageStart2 = 0x1036
+	Olympus1PreviewImageLength2 = 0x1037
+	Olympus1AFResult = 0x1038
+	Olympus1CCDScanMode = 0x1039
+	Olympus1NoiseReduction = 0x103A
+	Olympus1FocusStepInfinity = 0x103B
+	Olympus1FocusStepNear = 0x103C
+	Olympus1LightValueCenter = 0x103D
+	Olympus1LightValuePeriphery = 0x103E
+	Olympus1FieldCount = 0x103F
+	Olympus1EquipmentIFD = 0x2010
+	Olympus1CameraSettingsIFD = 0x2020
+	Olympus1RawDevelopmentIFD = 0x2030
+	Olympus1RawDev2IFD = 0x2031
+	Olympus1ImageProcessingIFD = 0x2040
+	Olympus1FocusInfoIFD = 0x2050
+	Olympus1RawInfoIFD = 0x3000
+)
+
+// Mapping from Olympus1 tags to strings.
+var Olympus1TagNames = map[tiff.Tag]string{
+	Olympus1MakerNoteVersion: "MakerNoteVersion",
+	Olympus1MinoltaCameraSettingsOld: "MinoltaCameraSettingsOld",
+	Olympus1MinoltaCameraSettings: "MinoltaCameraSettings",
+	Olympus1CompressedImageSize: "CompressedImageSize",
+	Olympus1PreviewImageData: "PreviewImageData",
+	Olympus1PreviewImageStart: "PreviewImageStart",
+	Olympus1PreviewImageLength: "PreviewImageLength",
+	Olympus1ThumbnailImage: "ThumbnailImage",
+	Olympus1BodyFirmwareVersion: "BodyFirmwareVersion",
+	Olympus1SpecialMode: "SpecialMode",
+	Olympus1Quality: "Quality",
+	Olympus1Macro: "Macro",
+	Olympus1BWMode: "BWMode",
+	Olympus1DigitalZoom: "DigitalZoom",
+	Olympus1FocalPlaneDiagonal: "FocalPlaneDiagonal",
+	Olympus1LensDistortionParams: "LensDistortionParams",
+	Olympus1CameraType: "CameraType",
+	Olympus1TextInfo: "TextInfo",
+	Olympus1CameraID: "CameraID",
+	Olympus1EpsonImageWidth: "EpsonImageWidth",
+	Olympus1EpsonImageHeight: "EpsonImageHeight",
+	Olympus1EpsonSoftware: "EpsonSoftware",
+	Olympus1Preview: "Preview",
+	Olympus1PreCaptureFrames: "PreCaptureFrames",
+	Olympus1WhiteBoard: "WhiteBoard",
+	Olympus1OneTouchWB: "OneTouchWB",
+	Olympus1WhiteBalanceBracket: "WhiteBalanceBracket",
+	Olympus1WhiteBalanceBias: "WhiteBalanceBias",
+	Olympus1BlackLevel: "BlackLevel",
+	Olympus1SceneMode: "SceneMode",
+	Olympus1SerialNumber: "SerialNumber",
+	Olympus1Firmware: "Firmware",
+	Olympus1PrintIM: "PrintIM",
+	Olympus1DataDump: "DataDump",
+	Olympus1DataDump2: "DataDump2",
+	Olympus1ZoomedPreviewStart: "ZoomedPreviewStart",
+	Olympus1ZoomedPreviewLength: "ZoomedPreviewLength",
+	Olympus1ZoomedPreviewSize: "ZoomedPreviewSize",
+	Olympus1ShutterSpeedValue: "ShutterSpeedValue",
+	Olympus1ISOValue: "ISOValue",
+	Olympus1ApertureValue: "ApertureValue",
+	Olympus1BrightnessValue: "BrightnessValue",
+	Olympus1FlashMode: "FlashMode",
+	Olympus1FlashDevice: "FlashDevice",
+	Olympus1ExposureCompensation: "ExposureCompensation",
+	Olympus1SensorTemperature: "SensorTemperature",
+	Olympus1LensTemperature: "LensTemperature",
+	Olympus1LightCondition: "LightCondition",
+	Olympus1FocusRange: "FocusRange",
+	Olympus1FocusMode: "FocusMode",
+	Olympus1ManualFocusDistance: "ManualFocusDistance",
+	Olympus1ZoomStepCount: "ZoomStepCount",
+	Olympus1FocusStepCount: "FocusStepCount",
+	Olympus1Sharpness: "Sharpness",
+	Olympus1FlashChargeLevel: "FlashChargeLevel",
+	Olympus1ColorMatrix: "ColorMatrix",
+	Olympus1BlackLevel2: "BlackLevel2",
+	Olympus1ColorTemperatureBG: "ColorTemperatureBG",
+	Olympus1ColorTemperatureRG: "ColorTemperatureRG",
+	Olympus1WBMode: "WBMode",
+	Olympus1RedBalance: "RedBalance",
+	Olympus1BlueBalance: "BlueBalance",
+	Olympus1ColorMatrixNumber: "ColorMatrixNumber",
+	Olympus1SerialNumber2: "SerialNumber2",
+	Olympus1ExternalFlashAE1_0: "ExternalFlashAE1_0",
+	Olympus1ExternalFlashAE2_0: "ExternalFlashAE2_0",
+	Olympus1InternalFlashAE1_0: "InternalFlashAE1_0",
+	Olympus1InternalFlashAE2_0: "InternalFlashAE2_0",
+	Olympus1ExternalFlashAE1: "ExternalFlashAE1",
+	Olympus1ExternalFlashAE2: "ExternalFlashAE2",
+	Olympus1InternalFlashAE1: "InternalFlashAE1",
+	Olympus1InternalFlashAE2: "InternalFlashAE2",
+	Olympus1FlashExposureComp: "FlashExposureComp",
+	Olympus1InternalFlashTable: "InternalFlashTable",
+	Olympus1ExternalFlashGValue: "ExternalFlashGValue",
+	Olympus1ExternalFlashBounce: "ExternalFlashBounce",
+	Olympus1ExternalFlashZoom: "ExternalFlashZoom",
+	Olympus1ExternalFlashMode: "ExternalFlashMode",
+	Olympus1Contrast: "Contrast",
+	Olympus1SharpnessFactor: "SharpnessFactor",
+	Olympus1ColorControl: "ColorControl",
+	Olympus1ValidBits: "ValidBits",
+	Olympus1CoringFilter: "CoringFilter",
+	Olympus1OlympusImageWidth: "OlympusImageWidth",
+	Olympus1OlympusImageHeight: "OlympusImageHeight",
+	Olympus1SceneDetect: "SceneDetect",
+	Olympus1SceneArea: "SceneArea",
+	Olympus1SceneDetectData: "SceneDetectData",
+	Olympus1CompressionRatio: "CompressionRatio",
+	Olympus1PreviewImageValid: "PreviewImageValid",
+	Olympus1PreviewImageStart2: "PreviewImageStart2",
+	Olympus1PreviewImageLength2: "PreviewImageLength2",
+	Olympus1AFResult: "AFResult",
+	Olympus1CCDScanMode: "CCDScanMode",
+	Olympus1NoiseReduction: "NoiseReduction",
+	Olympus1FocusStepInfinity: "FocusStepInfinity",
+	Olympus1FocusStepNear: "FocusStepNear",
+	Olympus1LightValueCenter: "LightValueCenter",
+	Olympus1LightValuePeriphery: "LightValuePeriphery",
+	Olympus1FieldCount: "FieldCount",
+	Olympus1EquipmentIFD: "EquipmentIFD",
+	Olympus1CameraSettingsIFD: "CameraSettingsIFD",
+	Olympus1RawDevelopmentIFD: "RawDevelopmentIFD",
+	Olympus1RawDev2IFD: "RawDev2IFD",
+	Olympus1ImageProcessingIFD: "ImageProcessingIFD",
+	Olympus1FocusInfoIFD: "FocusInfoIFD",
+	Olympus1RawInfoIFD: "RawInfoIFD",
+}
+
+// Tags in the Olympus1 Equipment IFD
+// ExifTool lib/Image/ExifTool/Olympus.pm ::Equipment
+const (
+	Olympus1EqVersion = 0x0
+	Olympus1EqCameraType2 = 0x100
+	Olympus1EqSerialNumber = 0x101
+	Olympus1EqInternalSerialNumber = 0x102
+	Olympus1EqFocalPlaneDiagonal = 0x103
+	Olympus1EqBodyFirmwareVersion = 0x104
+	Olympus1EqLensType = 0x201
+	Olympus1EqLensSerialNumber = 0x202
+	Olympus1EqLensModel = 0x203
+	Olympus1EqLensFirmwareVersion = 0x204
+	Olympus1EqMaxApertureAtMinFocal = 0x205
+	Olympus1EqMaxApertureAtMaxFocal = 0x206
+	Olympus1EqMinFocalLength = 0x207
+	Olympus1EqMaxFocalLength = 0x208
+	Olympus1EqMaxAperture = 0x20A
+	Olympus1EqLensProperties = 0x20B
+	Olympus1EqExtender = 0x300
+	Olympus1EqExtenderSerialNumber = 0x302
+	Olympus1EqExtenderModel = 0x303
+	Olympus1EqExtenderFirmwareVersion = 0x304
+	Olympus1EqConversionLens = 0x403
+	Olympus1EqFlashType = 0x1000
+	Olympus1EqFlashModel = 0x1001
+	Olympus1EqFlashFirmwareVersion = 0x1002
+	Olympus1EqFlashSerialNumber = 0x1003
+)
+
+// Mapping from Olympus1 Equipment tags to strings.
+var Olympus1EquipmentTagNames = map[tiff.Tag]string{
+	Olympus1EqVersion: "Version",
+	Olympus1EqCameraType2: "CameraType2",
+	Olympus1EqSerialNumber: "SerialNumber",
+	Olympus1EqInternalSerialNumber: "InternalSerialNumber",
+	Olympus1EqFocalPlaneDiagonal: "FocalPlaneDiagonal",
+	Olympus1EqBodyFirmwareVersion: "BodyFirmwareVersion",
+	Olympus1EqLensType: "LensType",
+	Olympus1EqLensSerialNumber: "LensSerialNumber",
+	Olympus1EqLensModel: "LensModel",
+	Olympus1EqLensFirmwareVersion: "LensFirmwareVersion",
+	Olympus1EqMaxApertureAtMinFocal: "MaxApertureAtMinFocal",
+	Olympus1EqMaxApertureAtMaxFocal: "MaxApertureAtMaxFocal",
+	Olympus1EqMinFocalLength: "MinFocalLength",
+	Olympus1EqMaxFocalLength: "MaxFocalLength",
+	Olympus1EqMaxAperture: "MaxAperture",
+	Olympus1EqLensProperties: "LensProperties",
+	Olympus1EqExtender: "Extender",
+	Olympus1EqExtenderSerialNumber: "ExtenderSerialNumber",
+	Olympus1EqExtenderModel: "ExtenderModel",
+	Olympus1EqExtenderFirmwareVersion: "ExtenderFirmwareVersion",
+	Olympus1EqConversionLens: "ConversionLens",
+	Olympus1EqFlashType: "FlashType",
+	Olympus1EqFlashModel: "FlashModel",
+	Olympus1EqFlashFirmwareVersion: "FlashFirmwareVersion",
+	Olympus1EqFlashSerialNumber: "FlashSerialNumber",
+}
+
+// Tags in the Olympus1 Camera Settings IFD
+// ExifTool lib/Image/ExifTool/Olympus.pm ::CameraSettings
+const (
+	Olympus1CSVersion = 0x0
+	Olympus1CSPreviewImageValid = 0x100
+	Olympus1CSPreviewImageStart = 0x101
+	Olympus1CSPreviewImageLength = 0x102
+	Olympus1CSExposureMode = 0x200
+	Olympus1CSAELock = 0x201
+	Olympus1CSMeteringMode = 0x202
+	Olympus1CSExposureShift = 0x203
+	Olympus1CSNDFilter = 0x204
+	Olympus1CSMacroMode = 0x300
+	Olympus1CSFocusMode = 0x301
+	Olympus1CSFocusProcess = 0x302
+	Olympus1CSAFSearch = 0x303
+	Olympus1CSAFAreas = 0x304
+	Olympus1CSAFPointSelected = 0x305
+	Olympus1CSAFFineTune = 0x306
+	Olympus1CSAFFineTuneAdj = 0x307
+	Olympus1CSFlashMode = 0x400
+	Olympus1CSFlashExposureComp = 0x401
+	Olympus1CSFlashRemoteControl = 0x403
+	Olympus1CSFlashControlMode = 0x404
+	Olympus1CSFlashIntensity = 0x405
+	Olympus1CSManualFlashStrength = 0x406
+	Olympus1CSWhiteBalance2 = 0x500
+	Olympus1CSWhiteBalanceTemperature = 0x501
+	Olympus1CSWhiteBalanceBracket = 0x502
+	Olympus1CSCustomSaturation = 0x503
+	Olympus1CSModifiedSaturation = 0x504
+	Olympus1CSConstrastSetting = 0x505
+	Olympus1CSSharpnessSetting = 0x506
+	Olympus1CSColorSpace = 0x507
+	Olympus1CSSceneMode = 0x509
+	Olympus1CSNoiseReduction = 0x50A
+	Olympus1CSDistortionCorrection = 0x50B
+	Olympus1CSShadingCompensation = 0x50C
+	Olympus1CSCompressionFactor = 0x50D
+	Olympus1CSGradation = 0x50F
+	Olympus1CSPictureMode = 0x520
+	Olympus1CSPictureModeSaturation = 0x521
+	Olympus1CSPictureModeHue = 0x522
+	Olympus1CSPictureModeContrast = 0x523
+	Olympus1CSPictureModeSharpness = 0x524
+	Olympus1CSPictureModeBWFilter = 0x525
+	Olympus1CSPictureModeTone = 0x526
+	Olympus1CSNoiseFilter = 0x527
+	Olympus1CSArtFilter = 0x529
+	Olympus1CSMagicFilter = 0x52C
+	Olympus1CSPictureModeEffect = 0x52D
+	Olympus1CSToneLevel = 0x52E
+	Olympus1CSArtFilterEffect = 0x52F
+	Olympus1CSColorCreatorEffect = 0x532
+	Olympus1CSMonochromeProfileSettings = 0x537
+	Olympus1CSFilmGrainEffect = 0x538
+	Olympus1CSColorProfileSettings = 0x539
+	Olympus1CSMonochromeVignetting = 0x53A
+	Olympus1CSMonochromeColor = 0x53B
+	Olympus1CSDriveMode = 0x600
+	Olympus1CSPanoramaMode = 0x601
+	Olympus1CSImageQuality2 = 0x603
+	Olympus1CSImageStablization = 0x604
+	Olympus1CSStackedImage = 0x804
+	Olympus1CSManometerPressure = 0x900
+	Olympus1CSManometerReading = 0x901
+	Olympus1CSExtendedWBDetect = 0x902
+	Olympus1CSRollAngle = 0x903
+	Olympus1CSPitchAngle = 0x904
+	Olympus1CSDateTimeUTC = 0x908
+)
+
+// Mapping from Olympus1 Camera Settings tags to strings.
+var Olympus1CameraSettingsTagNames = map[tiff.Tag]string{
+	Olympus1CSVersion: "Version",
+	Olympus1CSPreviewImageValid: "PreviewImageValid",
+	Olympus1CSPreviewImageStart: "PreviewImageStart",
+	Olympus1CSPreviewImageLength: "PreviewImageLength",
+	Olympus1CSExposureMode: "ExposureMode",
+	Olympus1CSAELock: "AELock",
+	Olympus1CSMeteringMode: "MeteringMode",
+	Olympus1CSExposureShift: "ExposureShift",
+	Olympus1CSNDFilter: "NDFilter",
+	Olympus1CSMacroMode: "MacroMode",
+	Olympus1CSFocusMode: "FocusMode",
+	Olympus1CSFocusProcess: "FocusProcess",
+	Olympus1CSAFSearch: "AFSearch",
+	Olympus1CSAFAreas: "AFAreas",
+	Olympus1CSAFPointSelected: "AFPointSelected",
+	Olympus1CSAFFineTune: "AFFineTune",
+	Olympus1CSAFFineTuneAdj: "AFFineTuneAdj",
+	Olympus1CSFlashMode: "FlashMode",
+	Olympus1CSFlashExposureComp: "FlashExposureComp",
+	Olympus1CSFlashRemoteControl: "FlashRemoteControl",
+	Olympus1CSFlashControlMode: "FlashControlMode",
+	Olympus1CSFlashIntensity: "FlashIntensity",
+	Olympus1CSManualFlashStrength: "ManualFlashStrength",
+	Olympus1CSWhiteBalance2: "WhiteBalance2",
+	Olympus1CSWhiteBalanceTemperature: "WhiteBalanceTemperature",
+	Olympus1CSWhiteBalanceBracket: "WhiteBalanceBracket",
+	Olympus1CSCustomSaturation: "CustomSaturation",
+	Olympus1CSModifiedSaturation: "ModifiedSaturation",
+	Olympus1CSConstrastSetting: "ConstrastSetting",
+	Olympus1CSSharpnessSetting: "SharpnessSetting",
+	Olympus1CSColorSpace: "ColorSpace",
+	Olympus1CSSceneMode: "SceneMode",
+	Olympus1CSNoiseReduction: "NoiseReduction",
+	Olympus1CSDistortionCorrection: "DistortionCorrection",
+	Olympus1CSShadingCompensation: "ShadingCompensation",
+	Olympus1CSCompressionFactor: "CompressionFactor",
+	Olympus1CSGradation: "Gradation",
+	Olympus1CSPictureMode: "PictureMode",
+	Olympus1CSPictureModeSaturation: "PictureModeSaturation",
+	Olympus1CSPictureModeHue: "PictureModeHue",
+	Olympus1CSPictureModeContrast: "PictureModeContrast",
+	Olympus1CSPictureModeSharpness: "PictureModeSharpness",
+	Olympus1CSPictureModeBWFilter: "PictureModeBWFilter",
+	Olympus1CSPictureModeTone: "PictureModeTone",
+	Olympus1CSNoiseFilter: "NoiseFilter",
+	Olympus1CSArtFilter: "ArtFilter",
+	Olympus1CSMagicFilter: "MagicFilter",
+	Olympus1CSPictureModeEffect: "PictureModeEffect",
+	Olympus1CSToneLevel: "ToneLevel",
+	Olympus1CSArtFilterEffect: "ArtFilterEffect",
+	Olympus1CSColorCreatorEffect: "ColorCreatorEffect",
+	Olympus1CSMonochromeProfileSettings: "MonochromeProfileSettings",
+	Olympus1CSFilmGrainEffect: "FilmGrainEffect",
+	Olympus1CSColorProfileSettings: "ColorProfileSettings",
+	Olympus1CSMonochromeVignetting: "MonochromeVignetting",
+	Olympus1CSMonochromeColor: "MonochromeColor",
+	Olympus1CSDriveMode: "DriveMode",
+	Olympus1CSPanoramaMode: "PanoramaMode",
+	Olympus1CSImageQuality2: "ImageQuality2",
+	Olympus1CSImageStablization: "ImageStablization",
+	Olympus1CSStackedImage: "StackedImage",
+	Olympus1CSManometerPressure: "ManometerPressure",
+	Olympus1CSManometerReading: "ManometerReading",
+	Olympus1CSExtendedWBDetect: "ExtendedWBDetect",
+	Olympus1CSRollAngle: "RollAngle",
+	Olympus1CSPitchAngle: "PitchAngle",
+	Olympus1CSDateTimeUTC: "DateTimeUTC",
+}
+
+// Tags in the Olympus1 Raw Development IFD
+// ExifTool lib/Image/ExifTool/Olympus.pm ::RawDevelopment
+const (
+	Olympus1RDVersion = 0x0
+	Olympus1RDExposureBiasValue = 0x100
+	Olympus1RDWhiteBalanceValue = 0x101
+	Olympus1RDWBFineAdjustment = 0x102
+	Olympus1RDGrayPoint = 0x103
+	Olympus1RDSaturationEmphasis = 0x104
+	Olympus1RDMemoryColorEmphasis = 0x105
+	Olympus1RDContrastValue = 0x106
+	Olympus1RDSharpnessValue = 0x107
+	Olympus1RDColorSpace = 0x108
+	Olympus1RDEngine = 0x109
+	Olympus1RDNoiseReduction = 0x10A
+	Olympus1RDEditStatus = 0x10B
+	Olympus1RDSettings = 0x10C
+)
+
+// Mapping from Olympus1 Raw Development tags to strings.
+var Olympus1RawDevelopmentTagNames = map[tiff.Tag]string{
+	Olympus1RDVersion: "Version",
+	Olympus1RDExposureBiasValue: "ExposureBiasValue",
+	Olympus1RDWhiteBalanceValue: "WhiteBalanceValue",
+	Olympus1RDWBFineAdjustment: "WBFineAdjustment",
+	Olympus1RDGrayPoint: "GrayPoint",
+	Olympus1RDSaturationEmphasis: "SaturationEmphasis",
+	Olympus1RDMemoryColorEmphasis: "MemoryColorEmphasis",
+	Olympus1RDContrastValue: "ContrastValue",
+	Olympus1RDSharpnessValue: "SharpnessValue",
+	Olympus1RDColorSpace: "ColorSpace",
+	Olympus1RDEngine: "Engine",
+	Olympus1RDNoiseReduction: "NoiseReduction",
+	Olympus1RDEditStatus: "EditStatus",
+	Olympus1RDSettings: "Settings",
+}
+
+// Tags in the Olympus1 Raw Dev 2 IFD
+// ExifTool lib/Image/ExifTool/Olympus.pm ::RawDevelopment2
+const (
+	Olympus1RD2Version = 0x0
+	Olympus1RD2ExposureBiasValue = 0x100
+	Olympus1RD2WhiteBalance = 0x101
+	Olympus1RD2WhiteBalanceValue = 0x102
+	Olympus1RD2WBFineAdjustment = 0x103
+	Olympus1RD2GrayPoint = 0x104
+	Olympus1RD2ContrastValue = 0x105
+	Olympus1RD2SharpnessValue = 0x106
+	Olympus1RD2SaturationEmphasis = 0x107
+	Olympus1RD2MemoryColorEmphasis = 0x108
+	Olympus1RD2ColorSpace = 0x109
+	Olympus1RD2NoiseReduction = 0x10A
+	Olympus1RD2Engine = 0x10B
+	Olympus1RD2PictureMode = 0x10C
+	Olympus1RD2PMSaturation = 0x10D
+	Olympus1RD2PMContrast = 0x10E
+	Olympus1RD2PMSharpness = 0x10F
+	Olympus1RD2PM_BWFilter = 0x110
+	Olympus1RD2PMPictureTone = 0x111
+	Olympus1RD2DevGradation = 0x112
+	Olympus1RD2DevSaturation3 = 0x113
+	Olympus1RD2AutoGradation = 0x119
+	Olympus1RD2PMNoiseFilter = 0x120
+	Olympus1RD2ArtFilter = 0x121
+)
+
+// Mapping from Olympus1 Raw Development tags to strings.
+var Olympus1RawDev2TagNames = map[tiff.Tag]string{
+	Olympus1RD2Version: "Version",
+	Olympus1RD2ExposureBiasValue: "ExposureBiasValue",
+	Olympus1RD2WhiteBalance: "WhiteBalance",
+	Olympus1RD2WhiteBalanceValue: "WhiteBalanceValue",
+	Olympus1RD2WBFineAdjustment: "WBFineAdjustment",
+	Olympus1RD2GrayPoint: "GrayPoint",
+	Olympus1RD2ContrastValue: "ContrastValue",
+	Olympus1RD2SharpnessValue: "SharpnessValue",
+	Olympus1RD2SaturationEmphasis: "SaturationEmphasis",
+	Olympus1RD2MemoryColorEmphasis: "MemoryColorEmphasis",
+	Olympus1RD2ColorSpace: "ColorSpace",
+	Olympus1RD2NoiseReduction: "NoiseReduction",
+	Olympus1RD2Engine: "Engine",
+	Olympus1RD2PictureMode: "PictureMode",
+	Olympus1RD2PMSaturation: "PMSaturation",
+	Olympus1RD2PMContrast: "PMContrast",
+	Olympus1RD2PMSharpness: "PMSharpness",
+	Olympus1RD2PM_BWFilter: "PM_BWFilter",
+	Olympus1RD2PMPictureTone: "PMPictureTone",
+	Olympus1RD2DevGradation: "DevGradation",
+	Olympus1RD2DevSaturation3: "DevSaturation3",
+	Olympus1RD2AutoGradation: "AutoGradation",
+	Olympus1RD2PMNoiseFilter: "PMNoiseFilter",
+	Olympus1RD2ArtFilter: "ArtFilter",
+}
+
+// Tags in the Olympus1 Image Processing IFD
+// ExifTool lib/Image/ExifTool/Olympus.pm ::ImageProcessing
+const (
+	Olympus1IPVersion = 0x0
+	Olympus1IPWB_RBLevels = 0x100
+	Olympus1IPWB_RBLevels3000K = 0x102
+	Olympus1IPWB_RBLevels3300K = 0x103
+	Olympus1IPWB_RBLevels3600K = 0x104
+	Olympus1IPWB_RBLevels3900K = 0x105
+	Olympus1IPWB_RBLevels4000K = 0x106
+	Olympus1IPWB_RBLevels4300K = 0x107
+	Olympus1IPWB_RBLevels4500K = 0x108
+	Olympus1IPWB_RBLevels4800K = 0x109
+	Olympus1IPWB_RBLevels5300K = 0x10A
+	Olympus1IPWB_RBLevels6000K = 0x10B
+	Olympus1IPWB_RBLevels6600K = 0x10C
+	Olympus1IPWB_RBLevels7500K = 0x10D
+	Olympus1IPWB_RBLevelsCWB1 = 0x10E
+	Olympus1IPWB_RBLevelsCWB2 = 0x10F
+	Olympus1IPWB_RBLevelsCWB3 = 0x110
+	Olympus1IPWB_RBLevelsCWB4 = 0x111
+	Olympus1IPWB_GLevel3000K = 0x113
+	Olympus1IPWB_GLevel3300K = 0x114
+	Olympus1IPWB_GLevel3600K = 0x115
+	Olympus1IPWB_GLevel3900K = 0x116
+	Olympus1IPWB_GLevel4000K = 0x117
+	Olympus1IPWB_GLevel4300K = 0x118
+	Olympus1IPWB_GLevel4500K = 0x119
+	Olympus1IPWB_GLevel4800K = 0x11A
+	Olympus1IPWB_GLevel5300K = 0x11B
+	Olympus1IPWB_GLevel6000K = 0x11C
+	Olympus1IPWB_GLevel6600K = 0x11D
+	Olympus1IPWB_GLevel7500K = 0x11E
+	Olympus1IPWB_GLevel = 0x11F
+	Olympus1IPColorMatrix = 0x200
+	Olympus1IPEnhancer = 0x300
+	Olympus1IPEnhancerValues = 0x301
+	Olympus1IPCoringFilter = 0x310
+	Olympus1IPCoringValues = 0x311
+	Olympus1IPBlackLevel2 = 0x600
+	Olympus1IPGainBase = 0x610
+	Olympus1IPValidBits = 0x611
+	Olympus1IPCropLeft = 0x612
+	Olympus1IPCropTop = 0x613
+	Olympus1IPCropWidth = 0x614
+	Olympus1IPCropHeight = 0x615
+	Olympus1IPSensorCalibration = 0x805
+	Olympus1IPNoiseReduction2 = 0x1010
+	Olympus1IPDistortionCorrection2 = 0x1011
+	Olympus1IPShadingCompensation2 = 0x1012
+	Olympus1IPMultipleExposureMode = 0x101C
+	Olympus1IPAspectRatio = 0x1112
+	Olympus1IPAspectFrame = 0x1113
+	Olympus1IPFacesDetected = 0x1200
+	Olympus1IPFaceDetectArea = 0x1201
+	Olympus1IPMaxFaces = 0x1202
+	Olympus1IPFaceDetectFrameSize = 0x1203
+	Olympus1IPFaceDetectFrameCrop = 0x1207
+	Olympus1IPCameraTemperature = 0x1306
+	Olympus1IPKeystoneCompensation = 0x1900
+	Olympus1IPKeystoneDirection = 0x1901
+	Olympus1IPKeystoneValue = 0x1906
+)
+
+// Mapping from Olympus1 Image Processing tags to strings.
+var Olympus1ImageProcessingTagNames = map[tiff.Tag]string{
+	Olympus1IPVersion: "Version",
+	Olympus1IPWB_RBLevels: "WB_RBLevels",
+	Olympus1IPWB_RBLevels3000K: "WB_RBLevels3000K",
+	Olympus1IPWB_RBLevels3300K: "WB_RBLevels3300K",
+	Olympus1IPWB_RBLevels3600K: "WB_RBLevels3600K",
+	Olympus1IPWB_RBLevels3900K: "WB_RBLevels3900K",
+	Olympus1IPWB_RBLevels4000K: "WB_RBLevels4000K",
+	Olympus1IPWB_RBLevels4300K: "WB_RBLevels4300K",
+	Olympus1IPWB_RBLevels4500K: "WB_RBLevels4500K",
+	Olympus1IPWB_RBLevels4800K: "WB_RBLevels4800K",
+	Olympus1IPWB_RBLevels5300K: "WB_RBLevels5300K",
+	Olympus1IPWB_RBLevels6000K: "WB_RBLevels6000K",
+	Olympus1IPWB_RBLevels6600K: "WB_RBLevels6600K",
+	Olympus1IPWB_RBLevels7500K: "WB_RBLevels7500K",
+	Olympus1IPWB_RBLevelsCWB1: "WB_RBLevelsCWB1",
+	Olympus1IPWB_RBLevelsCWB2: "WB_RBLevelsCWB2",
+	Olympus1IPWB_RBLevelsCWB3: "WB_RBLevelsCWB3",
+	Olympus1IPWB_RBLevelsCWB4: "WB_RBLevelsCWB4",
+	Olympus1IPWB_GLevel3000K: "WB_GLevel3000K",
+	Olympus1IPWB_GLevel3300K: "WB_GLevel3300K",
+	Olympus1IPWB_GLevel3600K: "WB_GLevel3600K",
+	Olympus1IPWB_GLevel3900K: "WB_GLevel3900K",
+	Olympus1IPWB_GLevel4000K: "WB_GLevel4000K",
+	Olympus1IPWB_GLevel4300K: "WB_GLevel4300K",
+	Olympus1IPWB_GLevel4500K: "WB_GLevel4500K",
+	Olympus1IPWB_GLevel4800K: "WB_GLevel4800K",
+	Olympus1IPWB_GLevel5300K: "WB_GLevel5300K",
+	Olympus1IPWB_GLevel6000K: "WB_GLevel6000K",
+	Olympus1IPWB_GLevel6600K: "WB_GLevel6600K",
+	Olympus1IPWB_GLevel7500K: "WB_GLevel7500K",
+	Olympus1IPWB_GLevel: "WB_GLevel",
+	Olympus1IPColorMatrix: "ColorMatrix",
+	Olympus1IPEnhancer: "Enhancer",
+	Olympus1IPEnhancerValues: "EnhancerValues",
+	Olympus1IPCoringFilter: "CoringFilter",
+	Olympus1IPCoringValues: "CoringValues",
+	Olympus1IPBlackLevel2: "BlackLevel2",
+	Olympus1IPGainBase: "GainBase",
+	Olympus1IPValidBits: "ValidBits",
+	Olympus1IPCropLeft: "CropLeft",
+	Olympus1IPCropTop: "CropTop",
+	Olympus1IPCropWidth: "CropWidth",
+	Olympus1IPCropHeight: "CropHeight",
+	Olympus1IPSensorCalibration: "SensorCalibration",
+	Olympus1IPNoiseReduction2: "NoiseReduction2",
+	Olympus1IPDistortionCorrection2: "DistortionCorrection2",
+	Olympus1IPShadingCompensation2: "ShadingCompensation2",
+	Olympus1IPMultipleExposureMode: "MultipleExposureMode",
+	Olympus1IPAspectRatio: "AspectRatio",
+	Olympus1IPAspectFrame: "AspectFrame",
+	Olympus1IPFacesDetected: "FacesDetected",
+	Olympus1IPFaceDetectArea: "FaceDetectArea",
+	Olympus1IPMaxFaces: "MaxFaces",
+	Olympus1IPFaceDetectFrameSize: "FaceDetectFrameSize",
+	Olympus1IPFaceDetectFrameCrop: "FaceDetectFrameCrop",
+	Olympus1IPCameraTemperature: "CameraTemperature",
+	Olympus1IPKeystoneCompensation: "KeystoneCompensation",
+	Olympus1IPKeystoneDirection: "KeystoneDirection",
+	Olympus1IPKeystoneValue: "KeystoneValue",
+}
+
+// Tags in the Olympus1 Focus Info IFD
+// ExifTool lib/Image/ExifTool/Olympus.pm ::FocusInfo
+const (
+	Olympus1FIVersion = 0x0
+	Olympus1FIAutoFocus = 0x209
+	Olympus1FISceneDetect = 0x210
+	Olympus1FISceneArea = 0x211
+	Olympus1FISceneDetectData = 0x212
+	Olympus1FIZoomStepCount = 0x300
+	Olympus1FIFocusStepCount = 0x301
+	Olympus1FIFocusStepInfinity = 0x303
+	Olympus1FIFocusStepNear = 0x304
+	Olympus1FIFocusDistance = 0x305
+	Olympus1FIAFPoint = 0x308
+	Olympus1FIAFInfo = 0x328
+	Olympus1FIExternalFlash = 0x1201
+	Olympus1FIExternalFlashGuideNumber = 0x1203
+	Olympus1FIExternalFlashBounce = 0x1204
+	Olympus1FIExternalFlashZoom = 0x1205
+	Olympus1FIInternalFlash = 0x1208
+	Olympus1FIManualFlash = 0x1209
+	Olympus1FIMacroLED = 0x120A
+	Olympus1FISensorTemperature = 0x1500
+	Olympus1FIImageStabilization = 0x1600
+)
+
+// Mapping from Olympus1 Focus Info tags to strings.
+var Olympus1FocusInfoTagNames = map[tiff.Tag]string{
+	Olympus1FIVersion: "Version",
+	Olympus1FIAutoFocus: "AutoFocus",
+	Olympus1FISceneDetect: "SceneDetect",
+	Olympus1FISceneArea: "SceneArea",
+	Olympus1FISceneDetectData: "SceneDetectData",
+	Olympus1FIZoomStepCount: "ZoomStepCount",
+	Olympus1FIFocusStepCount: "FocusStepCount",
+	Olympus1FIFocusStepInfinity: "FocusStepInfinity",
+	Olympus1FIFocusStepNear: "FocusStepNear",
+	Olympus1FIFocusDistance: "FocusDistance",
+	Olympus1FIAFPoint: "AFPoint",
+	Olympus1FIAFInfo: "AFInfo",
+	Olympus1FIExternalFlash: "ExternalFlash",
+	Olympus1FIExternalFlashGuideNumber: "ExternalFlashGuideNumber",
+	Olympus1FIExternalFlashBounce: "ExternalFlashBounce",
+	Olympus1FIExternalFlashZoom: "ExternalFlashZoom",
+	Olympus1FIInternalFlash: "InternalFlash",
+	Olympus1FIManualFlash: "ManualFlash",
+	Olympus1FIMacroLED: "MacroLED",
+	Olympus1FISensorTemperature: "SensorTemperature",
+	Olympus1FIImageStabilization: "ImageStabilization",
+}
+
 // Tags in the Panasonic1 maker note.
 // ExifTool lib/Image/ExifTool/Panasonic.pm
 const (

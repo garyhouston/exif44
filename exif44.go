@@ -260,6 +260,20 @@ func TagNameMap(space tiff.TagSpace) map[tiff.Tag]string {
 		names = GPSTagNames
 	case tiff.Canon1Space:
 		names = Canon1TagNames
+	case tiff.Olympus1Space:
+		names = Olympus1TagNames
+	case tiff.Olympus1EquipmentSpace:
+		names = Olympus1EquipmentTagNames
+	case tiff.Olympus1CameraSettingsSpace:
+		names = Olympus1CameraSettingsTagNames
+	case tiff.Olympus1RawDevelopmentSpace:
+		names = Olympus1RawDevelopmentTagNames
+	case tiff.Olympus1RawDev2Space:
+		names = Olympus1RawDev2TagNames
+	case tiff.Olympus1ImageProcessingSpace:
+		names = Olympus1ImageProcessingTagNames
+	case tiff.Olympus1FocusInfoSpace:
+		names = Olympus1FocusInfoTagNames
 	case tiff.Panasonic1Space:
 		names = Panasonic1TagNames
 	case tiff.Nikon1Space:
