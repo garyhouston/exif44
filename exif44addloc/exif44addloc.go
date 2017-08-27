@@ -53,21 +53,21 @@ func insertGPS(lat, long float64, gpsNode *tiff.IFDNode) {
 	fields[3].PutRational(longDeg, 1, 0, gpsNode.Order)
 	fields[3].PutRational(longMin, 1, 1, gpsNode.Order)
 	fields[3].PutRational(longSec, secMult, 2, gpsNode.Order)
-	gpsNode.IFD_T.DeleteFields([]tiff.Tag{exif.GPSLatitudeRef, exif.GPSLatitude, exif.GPSLongitudeRef, exif.GPSLongitude})
-	gpsNode.IFD_T.AddFields(fields)
+	gpsNode.DeleteFields([]tiff.Tag{exif.GPSLatitudeRef, exif.GPSLatitude, exif.GPSLongitudeRef, exif.GPSLongitude})
+	gpsNode.AddFields(fields)
 }
 
 // Add a GPS sub-IFD to an IFD node and return a pointer to it.
 func addGPS(node *tiff.IFDNode) *tiff.IFDNode {
-	gpsNode := tiff.NewIFDNodeTIFF(tiff.GPSSpace)
+	gpsNode := tiff.NewIFDNode(tiff.GPSSpace)
 	gpsNode.Order = node.Order
 	gpsVersionData := make([]byte, 4)
 	gpsVersion := tiff.Field{exif.GPSVersionID, tiff.BYTE, 4, gpsVersionData}
 	gpsVersion.PutByte(2, 0)
 	gpsVersion.PutByte(3, 1)
-	gpsNode.IFD_T.AddFields([]tiff.Field{gpsVersion})
+	gpsNode.AddFields([]tiff.Field{gpsVersion})
 	gpsIFDData := make([]byte, 4)
-	node.IFD_T.AddFields([]tiff.Field{{tiff.GPSIFD, tiff.LONG, 1, gpsIFDData}})
+	node.AddFields([]tiff.Field{{tiff.GPSIFD, tiff.LONG, 1, gpsIFDData}})
 	subIFD := tiff.SubIFD{tiff.GPSIFD, gpsNode}
 	node.SubIFDs = append(node.SubIFDs, subIFD)
 	return gpsNode
@@ -116,18 +116,18 @@ func processTIFF(lat, long float64, outfile io.Writer, infile io.Reader) error {
 
 // Create a new Exif node for a JPEG image, from scratch.
 func createExif() *exif.Exif {
-	node := tiff.NewIFDNodeTIFF(tiff.TIFFSpace)
+	node := tiff.NewIFDNode(tiff.TIFFSpace)
 	node.Order = binary.LittleEndian // arbitrary
 	// Add an Exif sub-IFD too, since the Exif spec may require
 	// the version to be specified.
-	exifNode := tiff.NewIFDNodeTIFF(tiff.ExifSpace)
+	exifNode := tiff.NewIFDNode(tiff.ExifSpace)
 	exifNode.Order = node.Order
 	exifVersionData := make([]byte, 4)
 	copy(exifVersionData, []byte("0230"))
 	exifVersion := tiff.Field{exif.ExifVersion, tiff.UNDEFINED, 4, exifVersionData}
-	exifNode.IFD_T.AddFields([]tiff.Field{exifVersion})
+	exifNode.AddFields([]tiff.Field{exifVersion})
 	exifIFDData := make([]byte, 4)
-	node.IFD_T.AddFields([]tiff.Field{{tiff.ExifIFD, tiff.LONG, 1, exifIFDData}})
+	node.AddFields([]tiff.Field{{tiff.ExifIFD, tiff.LONG, 1, exifIFDData}})
 	subIFD := tiff.SubIFD{tiff.ExifIFD, exifNode}
 	node.SubIFDs = append(node.SubIFDs, subIFD)
 	return &exif.Exif{TIFF: node}

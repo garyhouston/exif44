@@ -64,7 +64,7 @@ func processImage(writer io.WriteSeeker, reader io.ReadSeeker, mpfProcessor jseg
 				tree.TIFF.Fix()
 				app1 := make([]byte, exif.HeaderSize+tree.TreeSize())
 				next := exif.PutHeader(app1)
-				_, err = tree.Put(app1[next:])
+				next, err = tree.Put(app1[next:])
 				if err != nil {
 					return err
 				}
