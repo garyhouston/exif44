@@ -93,20 +93,19 @@ func processTIFF(lat, long float64, outfile io.Writer, infile io.Reader) error {
 	if err != nil {
 		return err
 	}
-	validTIFF, order, ifdPos := tiff.GetHeader(buf)
-	if !validTIFF {
-		return errors.New("processTIFF: invalid TIFF header")
-	}
-	root, err := tiff.GetIFDTree(buf, order, ifdPos, tiff.TIFFSpace)
+	tree, err := exif.GetExifTree(buf)
 	if err != nil {
 		return err
 	}
-	root.Fix()
-	putGPS(lat, long, root)
-	fileSize := tiff.HeaderSize + root.TreeSize()
+	tree.TIFF.Fix()
+	if err = tree.CheckMakerNote(); err != nil {
+		return err
+	}
+	putGPS(lat, long, tree.TIFF)
+	fileSize := tiff.HeaderSize + tree.TreeSize()
 	out := make([]byte, fileSize)
-	tiff.PutHeader(out, order, tiff.HeaderSize)
-	_, err = root.PutIFDTree(out, tiff.HeaderSize)
+	tiff.PutHeader(out, tree.TIFF.Order, tiff.HeaderSize)
+	_, err = tree.TIFF.PutIFDTree(out, tiff.HeaderSize)
 	if err != nil {
 		return err
 	}
@@ -213,12 +212,15 @@ func processImage(writer io.WriteSeeker, reader io.ReadSeeker, index uint32, lat
 		if index == 0 && marker == jseg.APP0+1 {
 			isExif, next := exif.GetHeader(buf)
 			if isExif {
-				exifNode, err := exif.GetExifTree(buf[next:])
+				tree, err := exif.GetExifTree(buf[next:])
 				if err != nil {
 					return err
 				}
-				exifNode.TIFF.Fix()
-				writeExif(lat, long, exifNode, dumper)
+				tree.TIFF.Fix()
+				if err = tree.CheckMakerNote(); err != nil {
+					return err
+				}
+				writeExif(lat, long, tree, dumper)
 				continue
 			}
 		}

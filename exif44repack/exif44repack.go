@@ -18,19 +18,18 @@ func processTIFF(outfile io.Writer, infile io.Reader) error {
 	if err != nil {
 		return err
 	}
-	validTIFF, order, ifdPos := tiff.GetHeader(buf)
-	if !validTIFF {
-		return errors.New("processTIFF: invalid TIFF header")
-	}
-	root, err := tiff.GetIFDTree(buf, order, ifdPos, tiff.TIFFSpace)
+	tree, err := exif.GetExifTree(buf)
 	if err != nil {
 		return err
 	}
-	root.Fix()
-	fileSize := tiff.HeaderSize + root.TreeSize()
+	tree.TIFF.Fix()
+	if err = tree.CheckMakerNote(); err != nil {
+		return err
+	}
+	fileSize := tiff.HeaderSize + tree.TreeSize()
 	out := make([]byte, fileSize)
-	tiff.PutHeader(out, order, tiff.HeaderSize)
-	_, err = root.PutIFDTree(out, tiff.HeaderSize)
+	tiff.PutHeader(out, tree.TIFF.Order, tiff.HeaderSize)
+	_, err = tree.TIFF.PutIFDTree(out, tiff.HeaderSize)
 	if err != nil {
 		return err
 	}
@@ -62,6 +61,9 @@ func processImage(writer io.WriteSeeker, reader io.ReadSeeker, mpfProcessor jseg
 					return err
 				}
 				tree.TIFF.Fix()
+				if err = tree.CheckMakerNote(); err != nil {
+					return err
+				}
 				app1 := make([]byte, exif.HeaderSize+tree.TreeSize())
 				next := exif.PutHeader(app1)
 				next, err = tree.Put(app1[next:])
