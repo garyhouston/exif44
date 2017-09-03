@@ -3,6 +3,7 @@ package exif44
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	tiff "github.com/garyhouston/tiff66"
 )
 
@@ -369,4 +370,23 @@ func (exif Exif) TreeSize() uint32 {
 func (exif *Exif) Put(buf []byte) (uint32, error) {
 	tiff.PutHeader(buf, exif.TIFF.Order, tiff.HeaderSize)
 	return exif.TIFF.PutIFDTree(buf, tiff.HeaderSize)
+}
+
+// Return an error if an Exif tree contains a maker note that wasn't
+// decoded.
+func (exif Exif) CheckMakerNote() error {
+	if exif.Exif != nil {
+		fields := exif.Exif.FindFields([]tiff.Tag{MakerNote})
+		if len(fields) > 0 && exif.MakerNote == nil {
+			maker := fields[0].ASCII()
+			plen := len(maker)
+			cont := ""
+			if plen > 15 {
+				plen = 15
+				cont = "..."
+			}
+			return errors.New(fmt.Sprintf("Unsupported maker note: %q%s", maker[0:plen], cont))
+		}
+	}
+	return nil
 }
