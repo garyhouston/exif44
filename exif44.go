@@ -378,7 +378,7 @@ func (exif Exif) CheckMakerNote() error {
 	if exif.Exif != nil {
 		fields := exif.Exif.FindFields([]tiff.Tag{MakerNote})
 		if len(fields) > 0 && exif.MakerNote == nil {
-			maker := fields[0].ASCII()
+			maker := fields[0].Data
 			plen := len(maker)
 			cont := ""
 			if plen > 15 {
