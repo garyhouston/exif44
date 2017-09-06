@@ -372,13 +372,28 @@ func (exif *Exif) Put(buf []byte) (uint32, error) {
 	return exif.TIFF.PutIFDTree(buf, tiff.HeaderSize)
 }
 
+func allZero(s []byte) bool {
+	for i := range s {
+		if s[i] != 0 {
+			return false
+		}
+	}
+	return true
+}
+
 // Return an error if an Exif tree contains a maker note that wasn't
-// decoded.
+// decoded, and may be damaged if rewritten at a new location.
 func (exif Exif) CheckMakerNote() error {
 	if exif.Exif != nil {
 		fields := exif.Exif.FindFields([]tiff.Tag{MakerNote})
 		if len(fields) > 0 && exif.MakerNote == nil {
 			maker := fields[0].Data
+			// Panasonic PV-DC2090 (c1999) creates maker notes with 
+			// four zero-valued bytes. Ignore all-zero maker
+			// notes, since they won't be damaged by relocation.
+			if allZero(maker) {
+				return nil
+			}
 			plen := len(maker)
 			cont := ""
 			if plen > 15 {
