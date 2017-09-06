@@ -101,6 +101,9 @@ func processTIFF(lat, long float64, outfile io.Writer, infile io.Reader) error {
 	if err = tree.CheckMakerNote(); err != nil {
 		return err
 	}
+	if err = tree.MakerNoteComplexities(); err != nil {
+		return err
+	}
 	putGPS(lat, long, tree.TIFF)
 	fileSize := tiff.HeaderSize + tree.TreeSize()
 	out := make([]byte, fileSize)
@@ -218,6 +221,9 @@ func processImage(writer io.WriteSeeker, reader io.ReadSeeker, index uint32, lat
 				}
 				tree.TIFF.Fix()
 				if err = tree.CheckMakerNote(); err != nil {
+					return err
+				}
+				if err = tree.MakerNoteComplexities(); err != nil {
 					return err
 				}
 				writeExif(lat, long, tree, dumper)

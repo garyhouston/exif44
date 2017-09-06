@@ -26,6 +26,9 @@ func processTIFF(outfile io.Writer, infile io.Reader) error {
 	if err = tree.CheckMakerNote(); err != nil {
 		return err
 	}
+	if err = tree.MakerNoteComplexities(); err != nil {
+		return err
+	}
 	fileSize := tiff.HeaderSize + tree.TreeSize()
 	out := make([]byte, fileSize)
 	tiff.PutHeader(out, tree.TIFF.Order, tiff.HeaderSize)
@@ -62,6 +65,9 @@ func processImage(writer io.WriteSeeker, reader io.ReadSeeker, mpfProcessor jseg
 				}
 				tree.TIFF.Fix()
 				if err = tree.CheckMakerNote(); err != nil {
+					return err
+				}
+				if err = tree.MakerNoteComplexities(); err != nil {
 					return err
 				}
 				app1 := make([]byte, exif.HeaderSize+tree.TreeSize())
