@@ -405,3 +405,21 @@ func (exif Exif) CheckMakerNote() error {
 	}
 	return nil
 }
+
+// Return an error if an Exif tree contains a maker note that requires
+// special processing (i.e., library functionality to get and put the
+// Exif tree won't process it correctly.) This is for applications
+// that don't bother to handle these cases.
+func (exif Exif) MakerNoteComplexities() error {
+	if exif.MakerNote != nil {
+		if exif.MakerNote.GetSpace() == tiff.Canon1Space {
+			// Preview images in Canon EOS 300D maker notes
+			// are stored outside the Exif JPEG segment.
+			fields := exif.MakerNote.FindFields([]tiff.Tag{Canon1PreviewImageInfo})
+			if len(fields) > 0 {
+				return errors.New(fmt.Sprintf("Unsupported PreviewImageInfo field in Canon maker note"))
+			}
+		}
+	}
+	return nil
+}
