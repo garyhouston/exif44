@@ -388,7 +388,7 @@ func (exif Exif) CheckMakerNote() error {
 		fields := exif.Exif.FindFields([]tiff.Tag{MakerNote})
 		if len(fields) > 0 && exif.MakerNote == nil {
 			maker := fields[0].Data
-			// Panasonic PV-DC2090 (c1999) creates maker notes with 
+			// Panasonic PV-DC2090 (c1999) creates maker notes with
 			// four zero-valued bytes. Ignore all-zero maker
 			// notes, since they won't be damaged by relocation.
 			if allZero(maker) {
