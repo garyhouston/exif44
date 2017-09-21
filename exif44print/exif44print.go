@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"flag"
 	"fmt"
 	exif "github.com/garyhouston/exif44"
@@ -11,7 +10,7 @@ import (
 )
 
 // Recursively print an IFD node, its subIFDs, and next IFD.
-func printTree(node *tiff.IFDNode, order binary.ByteOrder, maxLen uint32) {
+func printTree(node *tiff.IFDNode, maxLen uint32) {
 	fmt.Println()
 	fields := node.Fields
 	space := node.GetSpace()
@@ -21,15 +20,16 @@ func printTree(node *tiff.IFDNode, order binary.ByteOrder, maxLen uint32) {
 	} else {
 		fmt.Println("entry:")
 	}
+	order := node.Order
 	names := exif.TagNameMap(space)
 	for i := 0; i < len(fields); i++ {
 		fields[i].Print(order, names, maxLen)
 	}
 	for i := 0; i < len(node.SubIFDs); i++ {
-		printTree(node.SubIFDs[i].Node, order, maxLen)
+		printTree(node.SubIFDs[i].Node, maxLen)
 	}
 	if node.Next != nil {
-		printTree(node.Next, order, maxLen)
+		printTree(node.Next, maxLen)
 	}
 }
 
@@ -43,7 +43,7 @@ func (readExif readExif) ReadExif(imageIdx uint32, exif exif.Exif) error {
 		fmt.Println()
 		fmt.Println("== Processing Image ", imageIdx+1, "==")
 	}
-	printTree(exif.TIFF, exif.TIFF.Order, readExif.maxLen)
+	printTree(exif.TIFF, readExif.maxLen)
 	return nil
 }
 
