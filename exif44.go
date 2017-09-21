@@ -321,7 +321,7 @@ type Exif struct {
 	MakerNote *tiff.IFDNode // Pointer to maker note in Tree.
 }
 
-// Unpack a TIFF header and tree from a slice, as for GetHeader and
+// Unpack a TIFF header and tree from a slice, using GetHeader and
 // GetIFDTree from tiff66, and also return pointers to any Exif
 // subIFDs that are present. As for GetIFDTree, field data in the
 // structures points into the original byte slice, so modifying one
