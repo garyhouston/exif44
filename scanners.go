@@ -38,12 +38,12 @@ func Read(file io.ReadSeeker, control ReadControl) error {
 	}
 	if fileType == fileTIFF {
 		if control.ReadExif != nil {
-			if err := processTIFF(file, control); err != nil {
+			if err := readTIFF(file, control); err != nil {
 				return err
 			}
 		}
 	} else {
-		if err := processJPEG(file, control); err != nil {
+		if err := readJPEG(file, control); err != nil {
 			return err
 		}
 	}
@@ -82,12 +82,12 @@ func fileType(file io.Reader) (int, error) {
 	return 0, errors.New("File doesn't have a TIFF or JPEG header")
 }
 
-func processTIFF(file io.Reader, control ReadControl) error {
+func readTIFF(file io.Reader, control ReadControl) error {
 	buf, err := ioutil.ReadAll(file)
 	if err != nil {
 		return err
 	}
-	return scanTIFF(0, buf, control)
+	return readTIFFBuf(0, buf, control)
 }
 
 // State for the MPF image iterator.
@@ -98,14 +98,14 @@ type scanData struct {
 // Function to be applied to each MPF image.
 func (scan *scanData) MPFApply(reader io.ReadSeeker, index uint32, length uint32) error {
 	if index > 0 {
-		return scanJPEG(index, reader, &jseg.MPFCheck{}, scan.control)
+		return readJPEGImage(index, reader, &jseg.MPFCheck{}, scan.control)
 	}
 	return nil
 }
 
-func processJPEG(file io.ReadSeeker, control ReadControl) error {
+func readJPEG(file io.ReadSeeker, control ReadControl) error {
 	var index jseg.MPFGetIndex
-	if err := scanJPEG(0, file, &index, control); err != nil {
+	if err := readJPEGImage(0, file, &index, control); err != nil {
 		return err
 	}
 	if index.Index != nil {
@@ -121,7 +121,7 @@ func processJPEG(file io.ReadSeeker, control ReadControl) error {
 
 // Process a single image in a JPEG file. A file using the
 // Multi-Picture Format extension will contain multiple images.
-func scanJPEG(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFProcessor, control ReadControl) error {
+func readJPEGImage(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFProcessor, control ReadControl) error {
 	scanner, err := jseg.NewScanner(reader)
 	if err != nil {
 		return err
@@ -138,7 +138,7 @@ func scanJPEG(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFProces
 		if marker == jseg.APP0+1 && control.ReadExif != nil {
 			isExif, next := GetHeader(buf)
 			if isExif {
-				if err := scanTIFF(imageIdx, buf[next:], control); err != nil {
+				if err := readTIFFBuf(imageIdx, buf[next:], control); err != nil {
 					return err
 				}
 			}
@@ -152,7 +152,7 @@ func scanJPEG(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFProces
 	}
 }
 
-func scanTIFF(imageIdx uint32, buf []byte, control ReadControl) error {
+func readTIFFBuf(imageIdx uint32, buf []byte, control ReadControl) error {
 	exif, err := GetExifTree(buf)
 	if err != nil {
 		return err
