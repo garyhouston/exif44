@@ -163,6 +163,8 @@ func readTIFFBuf(imageIdx uint32, buf []byte, control ReadControl) error {
 // Control structure for ReadWrite and ReadWriteFile, with optional callbacks.
 type ReadWriteControl struct {
 	ReadWriteExif ReadWriteExif // Process Exif tree, or nil.
+	ExifRequired ExifRequired   // Check whether Exif block should be added if not present.
+	
 	// Additional callbacks could be added, e.g., for processing
 	// other types of metadata, JPEG blocks, or full MPF trees.
 }
@@ -175,6 +177,15 @@ type ReadWriteExif interface {
 	// via Multi-Picture Format, MPF). The data can be returned
 	// modified or unmodified as desired.
 	ReadWriteExif(imageIdx uint32, exif Exif) (Exif, error)
+}
+
+type ExifRequired interface {
+	// Callback to indicate whether an Exif block should be
+	// created if not already present for the specfied image
+	// number. For a JPEG file, an APP1 segment will be created if
+	// necessary. For JPEG or TIFF, Exif IFD will be created
+	// containing an ExifVersion field.
+	ExifRequired(iamgeIdx uint32) bool
 }
 
 // ReadWrite processes its input, which is expected to be an open image
@@ -313,12 +324,37 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 	}
 }
 
+// Create an Exif IFD and add it to a TIFF tree.
+func addExifIFD(exifobj *Exif) {
+	// Create the Exif IFD node.
+	exifNode := tiff.NewIFDNode(tiff.ExifSpace)
+	exifNode.Order = exifobj.TIFF.Order
+	// Add the version field to the node.
+	exifVersionData := make([]byte, 4)
+	copy(exifVersionData, []byte("0230"))
+	exifVersion := tiff.Field{Tag:ExifVersion, Type:tiff.UNDEFINED, Count:4, Data:exifVersionData}
+	exifNode.AddFields([]tiff.Field{exifVersion})
+	// Add a ExifIFD field to the TIFF IFD. Data will be set to the right
+	// offset when the tree is serialized.
+	exifIFDData := make([]byte, 4)
+	tiffNode := exifobj.TIFF
+	tiffNode.AddFields([]tiff.Field{{Tag:tiff.ExifIFD, Type:tiff.LONG, Count:1, Data:exifIFDData}})
+	// Add the Exif node to the TIFF node's sub-IFD list.
+	subIFD := tiff.SubIFD{tiff.ExifIFD, exifNode}
+	tiffNode.SubIFDs = append(tiffNode.SubIFDs, subIFD)
+	// Set the pointer in the Exif struct.
+	exifobj.Exif = exifNode
+}
+
 func readWriteTIFFBuf(imageIdx uint32, buf []byte, control ReadWriteControl) ([]byte, error) {
 	exif, err := GetExifTree(buf)
 	if err != nil {
 		return nil, err
 	}
 	exif.TIFF.Fix()
+	if exif.Exif == nil && control.ExifRequired != nil && control.ExifRequired.ExifRequired(imageIdx) == true {
+		addExifIFD(exif)
+	}
 	exifOut := *exif
 	if control.ReadWriteExif != nil {
 		exifOut, err = control.ReadWriteExif.ReadWriteExif(imageIdx, *exif)
