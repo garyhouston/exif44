@@ -131,8 +131,8 @@ func readJPEGImage(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFP
 		if err != nil {
 			return err
 		}
-		if marker == jseg.SOS {
-			// Start of scan data, no more metadata expected.
+		if marker == jseg.SOS || marker == jseg.EOI {
+			// No more metadata expected.
 			return nil
 		}
 		if marker == jseg.APP0+1 && control.ReadExif != nil {
