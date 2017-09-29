@@ -22,7 +22,7 @@ type ReadExif interface {
 	// tree. For JPEG files, it will be called on the Exif segment
 	// for each image in the file (multiple images are supported
 	// via Multi-Picture Format, MPF).
-	ReadExif(imageIdx uint32, exif Exif) error
+	ReadExif(format FileFormat, imageIdx uint32, exif Exif) error
 }
 
 // Read processes its input, which is expected to be an open image
@@ -36,7 +36,7 @@ func Read(reader io.ReadSeeker, control ReadControl) error {
 	if _, err := reader.Seek(0, 0); err != nil {
 		return err
 	}
-	if fileType == fileTIFF {
+	if fileType == FileTIFF {
 		if control.ReadExif != nil {
 			if err := readTIFF(reader, control); err != nil {
 				return err
@@ -60,24 +60,26 @@ func ReadFile(filename string, control ReadControl) error {
 	return Read(reader, control)
 }
 
-// Supported file types for ReadFile and ReadWriteFile.
+// Supported file formats for ReadFile and ReadWriteFile.
+type FileFormat uint8
+
 const (
-	fileTIFF = 1
-	fileJPEG = 2
+	FileTIFF = 1
+	FileJPEG = 2
 )
 
 // Determine type of stream. Anything not supported is an error. This will
 // read a few bytes from the reader, changing the position.
-func fileType(file io.Reader) (int, error) {
+func fileType(file io.Reader) (FileFormat, error) {
 	buf := make([]byte, tiff.HeaderSize)
 	if _, err := io.ReadFull(file, buf); err != nil {
 		return 0, err
 	}
 	if jseg.IsJPEGHeader(buf) {
-		return fileJPEG, nil
+		return FileJPEG, nil
 	}
 	if validTIFF, _, _ := tiff.GetHeader(buf); validTIFF {
-		return fileTIFF, nil
+		return FileTIFF, nil
 	}
 	return 0, errors.New("File doesn't have a TIFF or JPEG header")
 }
@@ -87,7 +89,7 @@ func readTIFF(reader io.Reader, control ReadControl) error {
 	if err != nil {
 		return err
 	}
-	return readTIFFBuf(0, buf, control)
+	return readTIFFBuf(FileTIFF, 0, buf, control)
 }
 
 // State for the MPF image iterator.
@@ -138,7 +140,7 @@ func readJPEGImage(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFP
 		if marker == jseg.APP0+1 && control.ReadExif != nil {
 			isExif, next := GetHeader(buf)
 			if isExif {
-				if err := readTIFFBuf(imageIdx, buf[next:], control); err != nil {
+				if err := readTIFFBuf(FileJPEG, imageIdx, buf[next:], control); err != nil {
 					return err
 				}
 			}
@@ -152,12 +154,12 @@ func readJPEGImage(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFP
 	}
 }
 
-func readTIFFBuf(imageIdx uint32, buf []byte, control ReadControl) error {
+func readTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control ReadControl) error {
 	exif, err := GetExifTree(buf)
 	if err != nil {
 		return err
 	}
-	return control.ReadExif.ReadExif(imageIdx, *exif)
+	return control.ReadExif.ReadExif(format, imageIdx, *exif)
 }
 
 // Control structure for ReadWrite and ReadWriteFile, with optional callbacks.
@@ -176,16 +178,16 @@ type ReadWriteExif interface {
 	// for each image in the file (multiple images are supported
 	// via Multi-Picture Format, MPF). The data can be returned
 	// modified or unmodified as desired.
-	ReadWriteExif(imageIdx uint32, exif Exif) (Exif, error)
+	ReadWriteExif(format FileFormat, imageIdx uint32, exif Exif) (Exif, error)
 }
 
 type ExifRequired interface {
-	// Callback to indicate whether an Exif block should be
+	// Callback to determine whether an Exif block should be
 	// created if not already present for the specfied image
 	// number. For a JPEG file, an APP1 segment will be created if
-	// necessary. For JPEG or TIFF, Exif IFD will be created
+	// necessary. For JPEG or TIFF, an Exif IFD will be created
 	// containing an ExifVersion field.
-	ExifRequired(iamgeIdx uint32) bool
+	ExifRequired(format FileFormat, imageIdx uint32) bool
 }
 
 // ReadWrite processes its input, which is expected to be an open image
@@ -199,7 +201,7 @@ func ReadWrite(reader io.ReadSeeker, writer io.WriteSeeker, control ReadWriteCon
 	if _, err := reader.Seek(0, 0); err != nil {
 		return err
 	}
-	if fileType == fileTIFF {
+	if fileType == FileTIFF {
 		return readWriteTIFF(reader, writer, control)
 	} else {
 		return readWriteJPEG(reader, writer, control)
@@ -228,7 +230,7 @@ func readWriteTIFF(infile io.Reader, outfile io.Writer, control ReadWriteControl
 	}
 	if inbuf == nil {
 	}
-	outbuf, err := readWriteTIFFBuf(0, inbuf, control)
+	outbuf, err := readWriteTIFFBuf(FileTIFF, 0, inbuf, control)
 	if err != nil {
 		return err
 	}
@@ -301,7 +303,7 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 		if marker == jseg.APP0+1 {
 			isExif, next := GetHeader(buf)
 			if isExif {
-				newTIFF, err := readWriteTIFFBuf(imageIdx, buf[next:], control)
+				newTIFF, err := readWriteTIFFBuf(FileJPEG, imageIdx, buf[next:], control)
 				if err != nil {
 					return err
 				}
@@ -325,10 +327,10 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 }
 
 // Create an Exif IFD and add it to a TIFF tree.
-func addExifIFD(exifobj *Exif) {
+func addExifIFD(exif *Exif) {
 	// Create the Exif IFD node.
 	exifNode := tiff.NewIFDNode(tiff.ExifSpace)
-	exifNode.Order = exifobj.TIFF.Order
+	exifNode.Order = exif.TIFF.Order
 	// Add the version field to the node.
 	exifVersionData := make([]byte, 4)
 	copy(exifVersionData, []byte("0230"))
@@ -337,27 +339,27 @@ func addExifIFD(exifobj *Exif) {
 	// Add a ExifIFD field to the TIFF IFD. Data will be set to the right
 	// offset when the tree is serialized.
 	exifIFDData := make([]byte, 4)
-	tiffNode := exifobj.TIFF
+	tiffNode := exif.TIFF
 	tiffNode.AddFields([]tiff.Field{{Tag:tiff.ExifIFD, Type:tiff.LONG, Count:1, Data:exifIFDData}})
 	// Add the Exif node to the TIFF node's sub-IFD list.
 	subIFD := tiff.SubIFD{tiff.ExifIFD, exifNode}
 	tiffNode.SubIFDs = append(tiffNode.SubIFDs, subIFD)
 	// Set the pointer in the Exif struct.
-	exifobj.Exif = exifNode
+	exif.Exif = exifNode
 }
 
-func readWriteTIFFBuf(imageIdx uint32, buf []byte, control ReadWriteControl) ([]byte, error) {
+func readWriteTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control ReadWriteControl) ([]byte, error) {
 	exif, err := GetExifTree(buf)
 	if err != nil {
 		return nil, err
 	}
 	exif.TIFF.Fix()
-	if exif.Exif == nil && control.ExifRequired != nil && control.ExifRequired.ExifRequired(imageIdx) == true {
+	if exif.Exif == nil && control.ExifRequired != nil && control.ExifRequired.ExifRequired(format, imageIdx) == true {
 		addExifIFD(exif)
 	}
 	exifOut := *exif
 	if control.ReadWriteExif != nil {
-		exifOut, err = control.ReadWriteExif.ReadWriteExif(imageIdx, *exif)
+		exifOut, err = control.ReadWriteExif.ReadWriteExif(format, imageIdx, *exif)
 		if err != nil {
 			return nil, err
 		}

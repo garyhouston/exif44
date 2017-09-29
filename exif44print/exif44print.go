@@ -38,7 +38,7 @@ type readExif struct {
 	maxLen uint32
 }
 
-func (readExif readExif) ReadExif(imageIdx uint32, exif exif.Exif) error {
+func (readExif readExif) ReadExif(format exif.FileFormat, imageIdx uint32, exif exif.Exif) error {
 	if imageIdx > 0 {
 		fmt.Println()
 		fmt.Println("== Processing Image ", imageIdx+1, "==")
