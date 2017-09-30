@@ -314,11 +314,30 @@ func PutHeader(buf []byte) uint32 {
 
 type Exif struct {
 	TIFF      *tiff.IFDNode // Pointer to top-level TIFF node, IFD0. This is the root of the tree containing all other nodes.
-	Exif      *tiff.IFDNode // Pointer to Exif in Tree.
-	GPS       *tiff.IFDNode // Pointer to GPS in Tree.
-	Interop   *tiff.IFDNode // Pointer to Interop in Tree.
-	Thumbnail *tiff.IFDNode // Pointer to TIFF IFD1 in Tree.
-	MakerNote *tiff.IFDNode // Pointer to maker note in Tree.
+	Exif      *tiff.IFDNode // Pointer to Exif in tree.
+	GPS       *tiff.IFDNode // Pointer to GPS in tree.
+	Interop   *tiff.IFDNode // Pointer to Interop in tree.
+	MakerNote *tiff.IFDNode // Pointer to maker note in tree.
+}
+
+// Create an Exif struct of pointers from an IFD tree.
+func makeExif(node *tiff.IFDNode) *Exif {
+	exif := Exif{TIFF: node}
+	for _, sub := range node.SubIFDs {
+		if sub.Node.GetSpace() == tiff.ExifSpace {
+			exif.Exif = sub.Node
+			for _, esub := range sub.Node.SubIFDs {
+				if esub.Node.GetSpace() == tiff.InteropSpace {
+					exif.Interop = esub.Node
+				} else if esub.Node.IsMakerNote() {
+					exif.MakerNote = esub.Node
+				}
+			}
+		} else if sub.Node.GetSpace() == tiff.GPSSpace {
+			exif.GPS = sub.Node
+		}
+	}
+	return &exif
 }
 
 // Unpack a TIFF header and tree from a slice, using GetHeader and
@@ -335,26 +354,7 @@ func GetExifTree(buf []byte) (*Exif, error) {
 	if err != nil {
 		return nil, err
 	}
-	exif := Exif{}
-	exif.TIFF = node
-	for _, sub := range node.SubIFDs {
-		if sub.Node.GetSpace() == tiff.ExifSpace {
-			exif.Exif = sub.Node
-			for _, esub := range sub.Node.SubIFDs {
-				if esub.Node.GetSpace() == tiff.InteropSpace {
-					exif.Interop = esub.Node
-				} else if esub.Node.IsMakerNote() {
-					exif.MakerNote = esub.Node
-				}
-			}
-		} else if sub.Node.GetSpace() == tiff.GPSSpace {
-			exif.GPS = sub.Node
-		}
-	}
-	if node.Next != nil {
-		exif.Thumbnail = node.Next
-	}
-	return &exif, nil
+	return makeExif(node), nil
 }
 
 // Return the size of a buffer needed to serialize the tree in an Exif
