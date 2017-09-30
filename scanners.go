@@ -165,8 +165,8 @@ func readTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control ReadCon
 // Control structure for ReadWrite and ReadWriteFile, with optional callbacks.
 type ReadWriteControl struct {
 	ReadWriteExif ReadWriteExif // Process Exif tree, or nil.
-	ExifRequired ExifRequired   // Check whether Exif block should be added if not present.
-	
+	ExifRequired  ExifRequired  // Check whether Exif block should be added if not present.
+
 	// Additional callbacks could be added, e.g., for processing
 	// other types of metadata, JPEG blocks, or full MPF trees.
 }
@@ -334,13 +334,13 @@ func addExifIFD(exif *Exif) {
 	// Add the version field to the node.
 	exifVersionData := make([]byte, 4)
 	copy(exifVersionData, []byte("0230"))
-	exifVersion := tiff.Field{Tag:ExifVersion, Type:tiff.UNDEFINED, Count:4, Data:exifVersionData}
+	exifVersion := tiff.Field{Tag: ExifVersion, Type: tiff.UNDEFINED, Count: 4, Data: exifVersionData}
 	exifNode.AddFields([]tiff.Field{exifVersion})
 	// Add a ExifIFD field to the TIFF IFD. Data will be set to the right
 	// offset when the tree is serialized.
 	exifIFDData := make([]byte, 4)
 	tiffNode := exif.TIFF
-	tiffNode.AddFields([]tiff.Field{{Tag:tiff.ExifIFD, Type:tiff.LONG, Count:1, Data:exifIFDData}})
+	tiffNode.AddFields([]tiff.Field{{Tag: tiff.ExifIFD, Type: tiff.LONG, Count: 1, Data: exifIFDData}})
 	// Add the Exif node to the TIFF node's sub-IFD list.
 	subIFD := tiff.SubIFD{tiff.ExifIFD, exifNode}
 	tiffNode.SubIFDs = append(tiffNode.SubIFDs, subIFD)
