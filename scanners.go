@@ -18,10 +18,12 @@ type ReadControl struct {
 
 type ReadExif interface {
 	// Callback for processing Exif data, read-only. In the case
-	// of TIFF files, this will be called once on the entire TIFF
-	// tree. For JPEG files, it will be called on the Exif segment
-	// for each image in the file (multiple images are supported
-	// via Multi-Picture Format, MPF).
+	// of TIFF files, it will be called once on each image in the
+	// TIFF tree, which are linked together using the Next
+	// pointers.  For JPEG files, it will be called on the Exif
+	// segment for each image in the file (multiple images are
+	// supported via Multi-Picture Format, MPF), and the Next
+	// pointer may link to a thumbnail image.
 	ReadExif(format FileFormat, imageIdx uint32, exif Exif) error
 }
 
@@ -159,7 +161,18 @@ func readTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control ReadCon
 	if err != nil {
 		return err
 	}
-	return control.ReadExif.ReadExif(format, imageIdx, *exif)
+	for exif != nil {
+		if err = control.ReadExif.ReadExif(format, imageIdx, *exif); err != nil {
+			return err
+		}
+		if format == FileJPEG || exif.TIFF.Next == nil {
+			exif = nil
+		} else {
+			exif = makeExif(exif.TIFF.Next)
+			imageIdx++
+		}
+	}
+	return nil
 }
 
 // Control structure for ReadWrite and ReadWriteFile, with optional callbacks.
