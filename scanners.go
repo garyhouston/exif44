@@ -1,6 +1,7 @@
 package exif44
 
 import (
+	"encoding/binary"
 	"errors"
 	jseg "github.com/garyhouston/jpegsegs"
 	tiff "github.com/garyhouston/tiff66"
@@ -301,6 +302,17 @@ func readWriteJPEG(reader io.ReadSeeker, writer io.WriteSeeker, control ReadWrit
 // Process a single image in a JPEG file. A file using Multi-Picture
 // Format will contain multiple images.
 func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSeeker, mpfProcessor jseg.MPFProcessor, control ReadWriteControl) error {
+	needExif := control.ExifRequired != nil && control.ExifRequired.ExifRequired(FileJPEG, imageIdx)
+	if needExif {
+		// Must be done before creating the scanner.
+		haveExif, err := findExif(reader)
+		if err != nil {
+			return err
+		}
+		if haveExif {
+			needExif = false
+		}
+	}
 	scanner, err := jseg.NewScanner(reader)
 	if err != nil {
 		return err
@@ -308,6 +320,16 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 	dumper, err := jseg.NewDumper(writer)
 	if err != nil {
 		return err
+	}
+	if needExif {
+		// Create an Exif segment at the start of the output.
+		buf, err := createExif(imageIdx, control)
+		if err != nil {
+			return err
+		}
+		if err = dumper.Dump(jseg.APP0+1, buf); err != nil {
+			return err
+		}
 	}
 	for {
 		marker, buf, err := scanner.Scan()
@@ -338,6 +360,61 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 			return nil
 		}
 	}
+}
+
+// Check if a JPEG image has an Exif block.
+func findExif(reader io.ReadSeeker) (bool, error) {
+	readerSave, err := reader.Seek(0, io.SeekCurrent)
+	if err != nil {
+		return false, err
+	}
+	scanner, err := jseg.NewScanner(reader)
+	if err != nil {
+		return false, err
+	}
+	haveExif := false
+	for {
+		marker, buf, err := scanner.Scan()
+		if err != nil {
+			return false, err
+		}
+		if marker == jseg.SOS || marker == jseg.EOI {
+			// No more metadata expected.
+			break
+		}
+		if marker == jseg.APP0+1 {
+			haveExif, _ = GetHeader(buf)
+			if haveExif {
+				break
+			}
+		}
+	}
+	// Reset the file position.
+	_, err = reader.Seek(readerSave, io.SeekStart)
+	if err != nil {
+		return false, err
+	}
+	return haveExif, nil
+}
+
+// Create an empty Exif node, call the ReadWrite callback on it, and
+// serialize the result.
+func createExif(imageIdx uint32, control ReadWriteControl) ([]byte, error) {
+	node := tiff.NewIFDNode(tiff.TIFFSpace)
+	node.Order = binary.LittleEndian // arbitrary
+	exif := Exif{TIFF: node}
+	bufSize := tiff.HeaderSize + exif.TreeSize()
+	buf := make([]byte, bufSize)
+	tiff.PutHeader(buf, exif.TIFF.Order, tiff.HeaderSize)
+	if _, err := exif.TIFF.PutIFDTree(buf, tiff.HeaderSize); err != nil {
+		return nil, err
+	}
+	newTIFF, err := readWriteTIFFBuf(FileJPEG, imageIdx, buf, control)
+	if err != nil {
+		return nil, err
+	}
+	buf = append(header, newTIFF...)
+	return buf, nil
 }
 
 // Create an Exif IFD and add it to a TIFF tree.
@@ -391,8 +468,8 @@ func readWriteTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control Re
 			imageIdx++
 		}
 	}
-	fileSize := tiff.HeaderSize + exif.TreeSize()
-	outbuf := make([]byte, fileSize)
+	bufSize := tiff.HeaderSize + exif.TreeSize()
+	outbuf := make([]byte, bufSize)
 	tiff.PutHeader(outbuf, exif.TIFF.Order, tiff.HeaderSize)
 	_, err = exif.TIFF.PutIFDTree(outbuf, tiff.HeaderSize)
 	return outbuf, err
