@@ -12,7 +12,7 @@ import (
 type readWriteExif struct {
 }
 
-func (readWriteExif readWriteExif) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif exif.Exif) (exif.Exif, error) {
+func (readWriteExif readWriteExif) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif *exif.Exif) error {
 	/*
 	           // For the first image in the file, delete any "Software"
 	           // field from the TIFF IFD0, and if there's an Exif IFD add a
@@ -32,7 +32,7 @@ func (readWriteExif readWriteExif) ReadWriteExif(format exif.FileFormat, imageId
 	   		}
 	   	}
 	*/
-	return xif, nil
+	return nil
 }
 
 // Decode a TIFF file, or the Exif segment(s) in a JPEG file, then re-encode
