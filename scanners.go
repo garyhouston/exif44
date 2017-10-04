@@ -186,12 +186,13 @@ type ReadWriteControl struct {
 
 type ReadWriteExif interface {
 	// Callback for processing Exif data, read-write. In the case
-	// of TIFF files, this will be called once on the entire TIFF
-	// tree. For JPEG files, it will be called on the Exif segment
-	// for each image in the file (multiple images are supported
-	// via Multi-Picture Format, MPF). The data can be returned
-	// modified or unmodified as desired.
-	ReadWriteExif(format FileFormat, imageIdx uint32, exif Exif) (Exif, error)
+	// of TIFF files, it will be called once on each image in the
+	// TIFF tree, which are linked together using the Next
+	// pointers.  For JPEG files, it will be called on the Exif
+	// segment for each image in the file (multiple images are
+	// supported via Multi-Picture Format, MPF), and the Next
+	// pointer may link to a thumbnail image.
+	ReadWriteExif(format FileFormat, imageIdx uint32, exif *Exif) error
 }
 
 type ExifRequired interface {
@@ -367,25 +368,32 @@ func readWriteTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control Re
 		return nil, err
 	}
 	exif.TIFF.Fix()
-	if exif.Exif == nil && control.ExifRequired != nil && control.ExifRequired.ExifRequired(format, imageIdx) == true {
-		addExifIFD(exif)
-	}
-	exifOut := *exif
-	if control.ReadWriteExif != nil {
-		exifOut, err = control.ReadWriteExif.ReadWriteExif(format, imageIdx, *exif)
-		if err != nil {
+	exifNode := exif
+	for exifNode != nil {
+		if exifNode.Exif == nil && control.ExifRequired != nil && control.ExifRequired.ExifRequired(format, imageIdx) == true {
+			addExifIFD(exifNode)
+		}
+		if control.ReadWriteExif != nil {
+			if err = control.ReadWriteExif.ReadWriteExif(format, imageIdx, exifNode); err != nil {
+				return nil, err
+			}
+		}
+		if err = exifNode.CheckMakerNote(); err != nil {
 			return nil, err
 		}
+		if err = exifNode.MakerNoteComplexities(); err != nil {
+			return nil, err
+		}
+		if format == FileJPEG || exifNode.TIFF.Next == nil {
+			exifNode = nil
+		} else {
+			exifNode = makeExif(exifNode.TIFF.Next)
+			imageIdx++
+		}
 	}
-	if err = exifOut.CheckMakerNote(); err != nil {
-		return nil, err
-	}
-	if err = exifOut.MakerNoteComplexities(); err != nil {
-		return nil, err
-	}
-	fileSize := tiff.HeaderSize + exifOut.TreeSize()
+	fileSize := tiff.HeaderSize + exif.TreeSize()
 	outbuf := make([]byte, fileSize)
-	tiff.PutHeader(outbuf, exifOut.TIFF.Order, tiff.HeaderSize)
-	_, err = exifOut.TIFF.PutIFDTree(outbuf, tiff.HeaderSize)
+	tiff.PutHeader(outbuf, exif.TIFF.Order, tiff.HeaderSize)
+	_, err = exif.TIFF.PutIFDTree(outbuf, tiff.HeaderSize)
 	return outbuf, err
 }
