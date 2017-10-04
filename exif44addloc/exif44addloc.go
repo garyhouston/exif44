@@ -3,14 +3,9 @@ package main
 // Add location coordinates to a JPEG or TIFF file.
 
 import (
-	"encoding/binary"
-	"errors"
 	"fmt"
 	exif "github.com/garyhouston/exif44"
-	jseg "github.com/garyhouston/jpegsegs"
 	tiff "github.com/garyhouston/tiff66"
-	"io"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -87,238 +82,25 @@ func putGPS(lat, long float64, root *tiff.IFDNode) {
 	insertGPS(lat, long, gpsNode)
 }
 
-// Process a TIFF file.
-func processTIFF(lat, long float64, outfile io.Writer, infile io.Reader) error {
-	buf, err := ioutil.ReadAll(infile)
-	if err != nil {
-		return err
-	}
-	tree, err := exif.GetExifTree(buf)
-	if err != nil {
-		return err
-	}
-	tree.TIFF.Fix()
-	if err = tree.CheckMakerNote(); err != nil {
-		return err
-	}
-	if err = tree.MakerNoteComplexities(); err != nil {
-		return err
-	}
-	putGPS(lat, long, tree.TIFF)
-	fileSize := tiff.HeaderSize + tree.TreeSize()
-	out := make([]byte, fileSize)
-	tiff.PutHeader(out, tree.TIFF.Order, tiff.HeaderSize)
-	_, err = tree.TIFF.PutIFDTree(out, tiff.HeaderSize)
-	if err != nil {
-		return err
-	}
-	_, err = outfile.Write(out)
-	return err
+// Exif handlers.
+type handlerData struct {
+	latitude, longitude float64
 }
 
-// Create a new Exif node for a JPEG image, from scratch.
-func createExif() *exif.Exif {
-	node := tiff.NewIFDNode(tiff.TIFFSpace)
-	node.Order = binary.LittleEndian // arbitrary
-	// Add an Exif sub-IFD too, since the Exif spec may require
-	// the version to be specified.
-	exifNode := tiff.NewIFDNode(tiff.ExifSpace)
-	exifNode.Order = node.Order
-	exifVersionData := make([]byte, 4)
-	copy(exifVersionData, []byte("0230"))
-	exifVersion := tiff.Field{exif.ExifVersion, tiff.UNDEFINED, 4, exifVersionData}
-	exifNode.AddFields([]tiff.Field{exifVersion})
-	exifIFDData := make([]byte, 4)
-	node.AddFields([]tiff.Field{{tiff.ExifIFD, tiff.LONG, 1, exifIFDData}})
-	subIFD := tiff.SubIFD{tiff.ExifIFD, exifNode}
-	node.SubIFDs = append(node.SubIFDs, subIFD)
-	return &exif.Exif{TIFF: node}
-}
-
-// Add coordinates to an Exif block and dump it to output.
-func writeExif(lat, long float64, exifNode *exif.Exif, dumper *jseg.Dumper) error {
-	putGPS(lat, long, exifNode.TIFF)
-	app1 := make([]byte, exif.HeaderSize+exifNode.TreeSize())
-	next := exif.PutHeader(app1)
-	_, err := exifNode.Put(app1[next:])
-	if err != nil {
-		return err
-	}
-	return dumper.Dump(jseg.APP0+1, app1)
-}
-
-// Check if file has an Exif block.
-func findExif(reader io.ReadSeeker) (bool, error) {
-	readerSave, err := reader.Seek(0, io.SeekCurrent)
-	if err != nil {
-		return false, err
-	}
-	scanner, err := jseg.NewScanner(reader)
-	if err != nil {
-		return false, err
-	}
-	haveExif := false
-	for {
-		marker, buf, err := scanner.Scan()
-		if err != nil {
-			return false, err
-		}
-		if marker == jseg.SOS {
-			// Start of scan data, no more metadata expected.
-			break
-		}
-		if marker == jseg.APP0+1 {
-			haveExif, _ = exif.GetHeader(buf)
-			break
-		}
-	}
-	// Reset the file position.
-	_, err = reader.Seek(readerSave, io.SeekStart)
-	if err != nil {
-		return false, err
-	}
-	return haveExif, nil
-}
-
-// Process a single image in a JPEG file. A file using Multi-Picture
-// Format will contain multiple images.
-func processImage(writer io.WriteSeeker, reader io.ReadSeeker, index uint32, lat, long float64, mpfProcessor jseg.MPFProcessor) error {
-	var err error
-	haveExif := false
-	// Process Exif for the first image only.
-	if index == 0 {
-		// Must be done before creating the scanner.
-		haveExif, err = findExif(reader)
-		if err != nil {
-			return err
-		}
-	}
-	scanner, err := jseg.NewScanner(reader)
-	if err != nil {
-		return err
-	}
-	dumper, err := jseg.NewDumper(writer)
-	if err != nil {
-		return err
-	}
-	if index == 0 && !haveExif {
-		// No Exif block in the file, so create one, add the GPS
-		// info, and dump it to the output stream.
-		exifNode := createExif()
-		writeExif(lat, long, exifNode, dumper)
-	}
-	for {
-		marker, buf, err := scanner.Scan()
-		if err != nil {
-			return err
-		}
-		if index == 0 && marker == jseg.APP0+1 {
-			isExif, next := exif.GetHeader(buf)
-			if isExif {
-				tree, err := exif.GetExifTree(buf[next:])
-				if err != nil {
-					return err
-				}
-				tree.TIFF.Fix()
-				if err = tree.CheckMakerNote(); err != nil {
-					return err
-				}
-				if err = tree.MakerNoteComplexities(); err != nil {
-					return err
-				}
-				writeExif(lat, long, tree, dumper)
-				continue
-			}
-		}
-		if marker == jseg.APP0+2 {
-			_, buf, err = mpfProcessor.ProcessAPP2(writer, reader, buf)
-			if err != nil {
-				return err
-			}
-		}
-		if err := dumper.Dump(marker, buf); err != nil {
-			return err
-		}
-		if marker == jseg.EOI {
-			return nil
-		}
-	}
-}
-
-// State for MPF image iterator.
-type iterData struct {
-	writer     io.WriteSeeker
-	newOffsets []uint32
-	lat        float64
-	long       float64
-}
-
-// Function to be applied to each MPF image.
-func (iter *iterData) MPFApply(reader io.ReadSeeker, index uint32, length uint32) error {
-	if index > 0 {
-		pos, err := iter.writer.Seek(0, io.SeekCurrent)
-		if err != nil {
-			return err
-		}
-		iter.newOffsets[index] = uint32(pos)
-		return processImage(iter.writer, reader, index, iter.lat, iter.long, &jseg.MPFCheck{})
+func (opts handlerData) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif *exif.Exif) error {
+	// Add GPS info to the first image only.
+	if imageIdx == 0 {
+		putGPS(opts.latitude, opts.longitude, xif.TIFF)
 	}
 	return nil
 }
 
-// Process additional images found in the MPF index.
-func processMPFImages(writer io.WriteSeeker, reader io.ReadSeeker, lat, long float64, index *jseg.MPFIndex) ([]uint32, error) {
-	var iter iterData
-	iter.writer = writer
-	iter.newOffsets = make([]uint32, len(index.ImageOffsets))
-	iter.lat = lat
-	iter.long = long
-	if err := index.ImageIterate(reader, &iter); err != nil {
-		return nil, err
+func (handlerData) ExifRequired(format exif.FileFormat, imageIdx uint32) bool {
+	// Require an Exif block in the first image.
+	if imageIdx == 0 {
+		return true
 	}
-	return iter.newOffsets, nil
-}
-
-// Process a JPEG file.
-func processJPEG(lat, long float64, writer io.WriteSeeker, reader io.ReadSeeker) error {
-	var mpfIndex jseg.MPFIndexRewriter
-	if err := processImage(writer, reader, 0, lat, long, &mpfIndex); err != nil {
-		return err
-	}
-	if mpfIndex.Tree != nil {
-		newOffsets, err := processMPFImages(writer, reader, lat, long, mpfIndex.Index)
-		if err != nil {
-			return err
-		}
-		end, err := writer.Seek(0, io.SeekCurrent)
-		if err != nil {
-			return err
-		}
-		if err = jseg.RewriteMPF(writer, mpfIndex.Tree, mpfIndex.APP2WritePos, newOffsets, uint32(end)); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-const (
-	TIFFFile = 1
-	JPEGFile = 2
-)
-
-// Determine if file is TIFF, JPEG or neither (error)
-func fileType(file io.Reader) (int, error) {
-	buf := make([]byte, tiff.HeaderSize)
-	if _, err := io.ReadFull(file, buf); err != nil {
-		return 0, err
-	}
-	if jseg.IsJPEGHeader(buf) {
-		return JPEGFile, nil
-	}
-	if validTIFF, _, _ := tiff.GetHeader(buf); validTIFF {
-		return TIFFFile, nil
-	}
-	return 0, errors.New("File doesn't have a TIFF or JPEG header")
+	return false
 }
 
 func usage() {
@@ -351,32 +133,12 @@ func main() {
 	if long < -180 || long > 180 {
 		log.Fatal("Longitude is out of range [-180, 180]")
 	}
-	infile, err := os.Open(in)
-	if err != nil {
+
+	var control exif.ReadWriteControl
+	handlerData := handlerData{latitude: lat, longitude: long}
+	control.ReadWriteExif = handlerData
+	control.ExifRequired = handlerData
+	if err := exif.ReadWriteFile(in, out, control); err != nil {
 		log.Fatal(err)
-	}
-	defer infile.Close()
-	fileType, err := fileType(infile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if _, err := infile.Seek(0, 0); err != nil {
-		log.Fatal(err)
-	}
-	outfile, err := os.Create(out)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer outfile.Close()
-	if fileType == TIFFFile {
-		err = processTIFF(lat, long, outfile, infile)
-		if err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		err = processJPEG(lat, long, outfile, infile)
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
 }
