@@ -16,7 +16,7 @@ The exif44addloc program adds location coordinates (GPS) to a JPEG or TIFF file.
 
 Metadata in JPEG files can also be stored in other formats such as XMP, which is not supported by this library. Both formats can be present in the same file.
 
-As per tiff66, not all maker note formats found in Exif can be currently decoded. In some cases they contain pointers which will be broken if a file is rewritten by this library.
+As per tiff66, not all maker note formats found in Exif can be currently decoded. In some cases they contain pointers which will be broken if a file is rewritten by this library. The high-level APIs, as used by the example programs above, will return an error if unsupported formats are detected.
 
 This library makes no provision for modification of data in multiple threads. Mutexes etc., should be used as required.
 
