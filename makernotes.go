@@ -4,7 +4,7 @@ import (
 	tiff "github.com/garyhouston/tiff66"
 )
 
-// Tag names are from ExifTool 10.56, which also has information about
+// Tag names are from ExifTool 10.63, which also has information about
 // how to interpret the values.
 
 // Tags in the Canon1 maker note, used for all Canon models.
