@@ -10,7 +10,7 @@ import (
 )
 
 // Recursively print an IFD node, its subIFDs, and next IFD.
-func printTree(node *tiff.IFDNode, maxLen uint32) {
+func printTree(format exif.FileFormat, node *tiff.IFDNode, maxLen uint32) {
 	fmt.Println()
 	fields := node.Fields
 	space := node.GetSpace()
@@ -26,10 +26,10 @@ func printTree(node *tiff.IFDNode, maxLen uint32) {
 		fields[i].Print(order, names, maxLen)
 	}
 	for i := 0; i < len(node.SubIFDs); i++ {
-		printTree(node.SubIFDs[i].Node, maxLen)
+		printTree(format, node.SubIFDs[i].Node, maxLen)
 	}
-	if node.Next != nil {
-		printTree(node.Next, maxLen)
+	if format == exif.FileJPEG && node.Next != nil {
+		printTree(format, node.Next, maxLen)
 	}
 }
 
@@ -43,7 +43,7 @@ func (readExif readExif) ReadExif(format exif.FileFormat, imageIdx uint32, exif 
 		fmt.Println()
 		fmt.Println("== Processing Image ", imageIdx+1, "==")
 	}
-	printTree(exif.TIFF, readExif.maxLen)
+	printTree(format, exif.TIFF, readExif.maxLen)
 	return nil
 }
 
