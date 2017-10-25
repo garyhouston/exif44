@@ -169,6 +169,134 @@ var Canon1TagNames = map[tiff.Tag]string{
 	Canon1AFConfig:                   "AFConfig",
 }
 
+// Tags in the Fujifilm1 maker note.
+const (
+	Fujifilm1Version                 = 0x0
+	Fujifilm1InternalSerialNumber    = 0x10
+	Fujifilm1Quality                 = 0x1000
+	Fujifilm1Sharpness               = 0x1001
+	Fujifilm1WhiteBalance            = 0x1002
+	Fujifilm1Saturation              = 0x1003
+	Fujifilm1Contrast1               = 0x1004
+	Fujifilm1ColorTemperature        = 0x1005
+	Fujifilm1Contrast2               = 0x1006
+	Fujifilm1WhiteBalanceFineTune    = 0x100A
+	Fujifilm1NoiseReduction          = 0x100B
+	Fujifilm1HighISONoiseReduction   = 0x100E
+	Fujifilm1FujiFlashMode           = 0x1010
+	Fujifilm1FlashExposureComp       = 0x1011
+	Fujifilm1Macro                   = 0x1020
+	Fujifilm1FocusMode               = 0x1021
+	Fujifilm1AFMode                  = 0x1022
+	Fujifilm1FocusPixel              = 0x1023
+	Fujifilm1SlowSync                = 0x1030
+	Fujifilm1PictureMode             = 0x1031
+	Fujifilm1ExposureCount           = 0x1032
+	Fujifilm1EXRAuto                 = 0x1033
+	Fujifilm1EXRMode                 = 0x1034
+	Fujifilm1ShadowTone              = 0x1040
+	Fujifilm1HighlightTone           = 0x1041
+	Fujifilm1DigitalZoom             = 0x1044
+	Fujifilm1ShutterType             = 0x1050
+	Fujifilm1AutoBracketing          = 0x1100
+	Fujifilm1SequenceNumber          = 0x1101
+	Fujifilm1PanoramaAngle           = 0x1153
+	Fujifilm1PanoramaDirection       = 0x1154
+	Fujifilm1AdvancedFilter          = 0x1201
+	Fujifilm1ColorMode               = 0x1210
+	Fujifilm1BlurWarning             = 0x1300
+	Fujifilm1FocusWarning            = 0x1301
+	Fujifilm1ExposureWarning         = 0x1302
+	Fujifilm1GEImageSize             = 0x1304
+	Fujifilm1DynamicRange            = 0x1400
+	Fujifilm1FilmMode                = 0x1401
+	Fujifilm1DynamicRangeSetting     = 0x1402
+	Fujifilm1DevelopmentDynamicRange = 0x1403
+	Fujifilm1MinFocalLength          = 0x1404
+	Fujifilm1MaxFocalLength          = 0x1405
+	Fujifilm1MaxApertureAtMinFocal   = 0x1406
+	Fujifilm1MaxApertureAtMaxFocal   = 0x1407
+	Fujifilm1AutoDynamicRange        = 0x140B
+	Fujifilm1ImageStabilization      = 0x1422
+	Fujifilm1Rating                  = 0x1431
+	Fujifilm1ImageGeneration         = 0x1436
+	Fujifilm1ImageCount              = 0x1438
+	Fujifilm1FrameRate               = 0x3820
+	Fujifilm1FrameWidth              = 0x3821
+	Fujifilm1FrameHeight             = 0x3822
+	Fujifilm1FacesDetected           = 0x4100
+	Fujifilm1FacePositions           = 0x4103
+	Fujifilm1FaceRecInfo             = 0x4282
+	Fujifilm1FileSource              = 0x8000
+	Fujifilm1OrderNumber             = 0x8002
+	Fujifilm1FrameNumber             = 0x8003
+	Fujifilm1Parallax                = 0xB211
+)
+
+// Mapping from Fujifilm1 tags to strings.
+var Fujifilm1TagNames = map[tiff.Tag]string{
+	Fujifilm1Version:                 "Version",
+	Fujifilm1InternalSerialNumber:    "InternalSerialNumber",
+	Fujifilm1Quality:                 "Quality",
+	Fujifilm1Sharpness:               "Sharpness",
+	Fujifilm1WhiteBalance:            "WhiteBalance",
+	Fujifilm1Saturation:              "Saturation",
+	Fujifilm1Contrast1:               "Contrast1",
+	Fujifilm1ColorTemperature:        "ColorTemperature",
+	Fujifilm1Contrast2:               "Contrast2",
+	Fujifilm1WhiteBalanceFineTune:    "WhiteBalanceFineTune",
+	Fujifilm1NoiseReduction:          "NoiseReduction",
+	Fujifilm1HighISONoiseReduction:   "HighISONoiseReduction",
+	Fujifilm1FujiFlashMode:           "FujiFlashMode",
+	Fujifilm1FlashExposureComp:       "FlashExposureComp",
+	Fujifilm1Macro:                   "Macro",
+	Fujifilm1FocusMode:               "FocusMode",
+	Fujifilm1AFMode:                  "AFMode",
+	Fujifilm1FocusPixel:              "FocusPixel",
+	Fujifilm1SlowSync:                "SlowSync",
+	Fujifilm1PictureMode:             "PictureMode",
+	Fujifilm1ExposureCount:           "ExposureCount",
+	Fujifilm1EXRAuto:                 "EXRAuto",
+	Fujifilm1EXRMode:                 "EXRMode",
+	Fujifilm1ShadowTone:              "ShadowTone",
+	Fujifilm1HighlightTone:           "HighlightTone",
+	Fujifilm1DigitalZoom:             "DigitalZoom",
+	Fujifilm1ShutterType:             "ShutterType",
+	Fujifilm1AutoBracketing:          "AutoBracketing",
+	Fujifilm1SequenceNumber:          "SequenceNumber",
+	Fujifilm1PanoramaAngle:           "PanoramaAngle",
+	Fujifilm1PanoramaDirection:       "PanoramaDirection",
+	Fujifilm1AdvancedFilter:          "AdvancedFilter",
+	Fujifilm1ColorMode:               "ColorMode",
+	Fujifilm1BlurWarning:             "BlurWarning",
+	Fujifilm1FocusWarning:            "FocusWarning",
+	Fujifilm1ExposureWarning:         "ExposureWarning",
+	Fujifilm1GEImageSize:             "GEImageSize",
+	Fujifilm1DynamicRange:            "DynamicRange",
+	Fujifilm1FilmMode:                "FilmMode",
+	Fujifilm1DynamicRangeSetting:     "DynamicRangeSetting",
+	Fujifilm1DevelopmentDynamicRange: "DevelopmentDynamicRange",
+	Fujifilm1MinFocalLength:          "MinFocalLength",
+	Fujifilm1MaxFocalLength:          "MaxFocalLength",
+	Fujifilm1MaxApertureAtMinFocal:   "MaxApertureAtMinFocal",
+	Fujifilm1MaxApertureAtMaxFocal:   "MaxApertureAtMaxFocal",
+	Fujifilm1AutoDynamicRange:        "AutoDynamicRange",
+	Fujifilm1ImageStabilization:      "ImageStabilization",
+	Fujifilm1Rating:                  "Rating",
+	Fujifilm1ImageGeneration:         "ImageGeneration",
+	Fujifilm1ImageCount:              "ImageCount",
+	Fujifilm1FrameRate:               "FrameRate",
+	Fujifilm1FrameWidth:              "FrameWidth",
+	Fujifilm1FrameHeight:             "FrameHeight",
+	Fujifilm1FacesDetected:           "FacesDetected",
+	Fujifilm1FacePositions:           "FacePositions",
+	Fujifilm1FaceRecInfo:             "FaceRecInfo",
+	Fujifilm1FileSource:              "FileSource",
+	Fujifilm1OrderNumber:             "OrderNumber",
+	Fujifilm1FrameNumber:             "FrameNumber",
+	Fujifilm1Parallax:                "Parallax",
+}
+
 // Tags in the Nikon1 maker note, used in early digital cameras
 // such as Coolpix 700, 800, 900 and 950. Exiftool calls it Type 2,
 // other sites call it Type 1.  Exiftool: lib/Image/ExifTool/Nikon.pm,

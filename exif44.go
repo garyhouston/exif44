@@ -261,6 +261,8 @@ func TagNameMap(space tiff.TagSpace) map[tiff.Tag]string {
 		names = GPSTagNames
 	case tiff.Canon1Space:
 		names = Canon1TagNames
+	case tiff.Fujifilm1Space:
+		names = Fujifilm1TagNames
 	case tiff.Olympus1Space:
 		names = Olympus1TagNames
 	case tiff.Olympus1EquipmentSpace:
@@ -388,9 +390,11 @@ func (exif Exif) CheckMakerNote() error {
 		fields := exif.Exif.FindFields([]tiff.Tag{MakerNote})
 		if len(fields) > 0 && exif.MakerNote == nil {
 			maker := fields[0].Data
-			// Panasonic PV-DC2090 (c1999) creates maker notes with
-			// four zero-valued bytes. Ignore all-zero maker
-			// notes, since they won't be damaged by relocation.
+			// Panasonic PV-DC2090 (c1999) creates maker
+			// notes with four zero-valued bytes. "GE DV1"
+			// also creates all-zero maker notes. Ignore
+			// all-zero maker notes, since they won't be
+			// damaged by relocation.
 			if allZero(maker) {
 				return nil
 			}
