@@ -390,14 +390,25 @@ func (exif Exif) CheckMakerNote() error {
 		fields := exif.Exif.FindFields([]tiff.Tag{MakerNote})
 		if len(fields) > 0 && exif.MakerNote == nil {
 			maker := fields[0].Data
-			// Panasonic PV-DC2090 (c1999) creates maker
-			// notes with four zero-valued bytes. "GE DV1"
-			// also creates all-zero maker notes. Ignore
-			// all-zero maker notes, since they won't be
-			// damaged by relocation.
+			// Ignore various maker notes that don't
+			// contain useful data and won't be harmed
+			// by relocation:
+			// All-zero maker notes, e.g., from
+			// Panasonic PV-DC2090 and GE DV1.
 			if allZero(maker) {
 				return nil
 			}
+			// Short maker notes starting with "MKED", e.g.,
+			// Panasonic PV-DC3000, Panasonic PV-SD4090.
+			if len(maker) < 9 && bytes.Compare(maker[0:4], []byte("MKED")) == 0 {
+				return nil
+			}
+			// Short maker notes starting with "MKEM", e.g.,
+			// Panasonic PV-L2001, Panasonic NV-DS65.
+			if len(maker) < 9 && bytes.Compare(maker[0:4], []byte("MKEM")) == 0 {
+				return nil
+			}
+			// Unsupported maker note, return an error.
 			plen := len(maker)
 			cont := ""
 			if plen > 15 {
