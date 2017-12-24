@@ -10,7 +10,7 @@ the library itself to handle the details of processing JPEG files that
 contain multiple images using the Multi-Picture Format (MPF), aka
 Multi-Picture Object (MPO). This is a JPEG extension used by various
 cameras to store multiple images in a single file, typically for large
-preview images or steroscopic images.
+preview images or stereoscopic images.
 
 The high-level interfaces are implemented using lower-level interfaces,
 which in turn using the tiff66 and jpegsegs libraries which are
