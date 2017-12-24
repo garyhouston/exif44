@@ -328,7 +328,6 @@ var Nikon1TagNames = map[tiff.Tag]string{
 // Coolpix 5000.  The maker note header may be missing for early
 // cameras, and has several versions otherwise.  Exiftool:
 // lib/Image/ExifTool/Nikon.pm, Image::ExifTool::Nikon::Main.
-
 const (
 	Nikon2MakerNoteVersion          = 0x1
 	Nikon2ISO                       = 0x2
