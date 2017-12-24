@@ -13,7 +13,7 @@ cameras to store multiple images in a single file, typically for large
 preview images or stereoscopic images.
 
 The high-level interfaces are implemented using lower-level interfaces,
-which in turn using the tiff66 and jpegsegs libraries which are
+which in turn use the tiff66 and jpegsegs libraries which are
 packaged separately.
 */
 package exif44
