@@ -12,7 +12,7 @@ import (
 
 // Control structure for Read and ReadFile, with optional callbacks.
 type ReadControl struct {
-	ReadExif ReadExif // Process Exif tree, or nil.
+	ReadExif ReadExif // Callback to process Exif tree, or nil.
 	// Additional callbacks could be added, e.g., for processing
 	// other types of metadata, JPEG blocks, or full MPF trees.
 }
@@ -143,7 +143,10 @@ func readJPEGImage(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFP
 		if marker == jseg.APP0+1 && control.ReadExif != nil {
 			isExif, next := GetHeader(buf)
 			if isExif {
-				if err := readTIFFBuf(FileJPEG, imageIdx, buf[next:], control); err != nil {
+				// Copy the buffer so that data in the Exif tree can remain valid if the callback decides to save it.
+				copyBuf := make([]byte, len(buf[next:]))
+				copy(copyBuf, buf[next:])
+				if err := readTIFFBuf(FileJPEG, imageIdx, copyBuf, control); err != nil {
 					return err
 				}
 			}
@@ -178,7 +181,7 @@ func readTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control ReadCon
 
 // Control structure for ReadWrite and ReadWriteFile, with optional callbacks.
 type ReadWriteControl struct {
-	ReadWriteExif ReadWriteExif // Process Exif tree, or nil.
+	ReadWriteExif ReadWriteExif // Callback to process Exif tree, or nil.
 	ExifRequired  ExifRequired  // Check whether Exif block should be added if not present.
 
 	// Additional callbacks could be added, e.g., for processing
@@ -339,7 +342,10 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 		if marker == jseg.APP0+1 {
 			isExif, next := GetHeader(buf)
 			if isExif {
-				newTIFF, err := readWriteTIFFBuf(FileJPEG, imageIdx, buf[next:], control)
+				// Copy the buffer so that data in the Exif tree can remain valid if the callback decides to save it.
+				copyBuf := make([]byte, len(buf[next:]))
+				copy(copyBuf, buf[next:])
+				newTIFF, err := readWriteTIFFBuf(FileJPEG, imageIdx, copyBuf, control)
 				if err != nil {
 					return err
 				}
