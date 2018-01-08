@@ -346,17 +346,16 @@ func makeExif(node *tiff.IFDNode) *Exif {
 // GetIFDTree from tiff66, and also return pointers to any Exif
 // subIFDs that are present. As for GetIFDTree, field data in the
 // structures points into the original byte slice, so modifying one
-// will modify the other.
+// will modify the other. Error handling is also inherited from
+// GetIFDTree: data will be read if possible even if errors occur,
+// and a multierror structure may be returned.
 func GetExifTree(buf []byte) (*Exif, error) {
 	valid, order, ifdpos := tiff.GetHeader(buf)
 	if !valid {
 		return nil, errors.New("GetExifTree: Invalid Tiff header")
 	}
 	node, err := tiff.GetIFDTree(buf, order, ifdpos, tiff.TIFFSpace)
-	if err != nil {
-		return nil, err
-	}
-	return makeExif(node), nil
+	return makeExif(node), err
 }
 
 // Return the size of a buffer needed to serialize the tree in an Exif
