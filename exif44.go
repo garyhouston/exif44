@@ -351,10 +351,14 @@ func makeExif(node *tiff.IFDNode) *Exif {
 // and a multierror structure may be returned.
 func GetExifTree(buf []byte) (*Exif, error) {
 	valid, order, ifdpos := tiff.GetHeader(buf)
+	var node *tiff.IFDNode
+	var err error
 	if !valid {
-		return nil, errors.New("GetExifTree: Invalid Tiff header")
+		node = tiff.NewIFDNode(tiff.TIFFSpace)
+		err = errors.New("Invalid Tiff header")
+	} else {
+		node, err = tiff.GetIFDTree(buf, order, ifdpos, tiff.TIFFSpace)
 	}
-	node, err := tiff.GetIFDTree(buf, order, ifdpos, tiff.TIFFSpace)
 	return makeExif(node), err
 }
 
