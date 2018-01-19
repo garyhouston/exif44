@@ -24,8 +24,11 @@ type ReadExif interface {
 	// pointers.  For JPEG files, it will be called on the Exif
 	// segment for each image in the file (multiple images are
 	// supported via Multi-Picture Format, MPF), and the Next
-	// pointer may link to a thumbnail image.
-	ReadExif(format FileFormat, imageIdx uint32, exif Exif) error
+	// pointer may link to a thumbnail image. Any errors from
+	// decoding the data will be available in err, which may be
+	// a multierror structure. Returning a non-nil error will
+	// terminate processing.
+	ReadExif(format FileFormat, imageIdx uint32, exif Exif, err error) error
 }
 
 // Read processes its input, which is expected to be an open image
@@ -162,21 +165,16 @@ func readJPEGImage(imageIdx uint32, reader io.ReadSeeker, mpfProcessor jseg.MPFP
 
 func readTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control ReadControl) error {
 	exif, err := GetExifTree(buf)
-	if err != nil {
-		return err
-	}
-	for exif != nil {
-		if err = control.ReadExif.ReadExif(format, imageIdx, *exif); err != nil {
+	for {
+		if err = control.ReadExif.ReadExif(format, imageIdx, *exif, err); err != nil {
 			return err
 		}
 		if format == FileJPEG || exif.TIFF.Next == nil {
-			exif = nil
-		} else {
-			exif = makeExif(exif.TIFF.Next)
-			imageIdx++
+			return nil
 		}
+		exif = makeExif(exif.TIFF.Next)
+		imageIdx++
 	}
-	return nil
 }
 
 // Control structure for ReadWrite and ReadWriteFile, with optional callbacks.
