@@ -87,20 +87,20 @@ type handlerData struct {
 	latitude, longitude float64
 }
 
-func (opts handlerData) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif *exif.Exif) error {
+func (opts handlerData) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif *exif.Exif, err error) error {
 	// Add GPS info to the first image only.
 	if imageIdx == 0 {
 		putGPS(opts.latitude, opts.longitude, xif.TIFF)
+	}
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
 	}
 	return nil
 }
 
 func (handlerData) ExifRequired(format exif.FileFormat, imageIdx uint32) bool {
 	// Require an Exif block in the first image.
-	if imageIdx == 0 {
-		return true
-	}
-	return false
+	return imageIdx == 0
 }
 
 func usage() {
