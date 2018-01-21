@@ -2,6 +2,7 @@ package exif44
 
 import (
 	"bytes"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	tiff "github.com/garyhouston/tiff66"
@@ -355,6 +356,7 @@ func GetExifTree(buf []byte) (*Exif, error) {
 	var err error
 	if !valid {
 		node = tiff.NewIFDNode(tiff.TIFFSpace)
+		node.Order = binary.LittleEndian // arbitrary
 		err = errors.New("Invalid Tiff header")
 	} else {
 		node, err = tiff.GetIFDTree(buf, order, ifdpos, tiff.TIFFSpace)
