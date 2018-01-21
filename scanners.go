@@ -193,8 +193,11 @@ type ReadWriteExif interface {
 	// pointers.  For JPEG files, it will be called on the Exif
 	// segment for each image in the file (multiple images are
 	// supported via Multi-Picture Format, MPF), and the Next
-	// pointer may link to a thumbnail image.
-	ReadWriteExif(format FileFormat, imageIdx uint32, exif *Exif) error
+	// pointer may link to a thumbnail image. Any errors from
+	// decoding the data will be available in err, which may be
+	// a multierror structure. Returning a non-nil error will
+	// terminate processing.
+	ReadWriteExif(format FileFormat, imageIdx uint32, exif *Exif, err error) error
 }
 
 type ExifRequired interface {
@@ -247,6 +250,9 @@ func readWriteTIFF(infile io.Reader, outfile io.Writer, control ReadWriteControl
 	if inbuf == nil {
 	}
 	outbuf, err := readWriteTIFFBuf(FileTIFF, 0, inbuf, control)
+	if outbuf == nil && err == nil {
+		err = errors.New("TIFF file would contain no fields, not writing.")
+	}
 	if err != nil {
 		return err
 	}
@@ -328,8 +334,10 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 		if err != nil {
 			return err
 		}
-		if err = dumper.Dump(jseg.APP0+1, buf); err != nil {
-			return err
+		if buf != nil {
+			if err = dumper.Dump(jseg.APP0+1, buf); err != nil {
+				return err
+			}
 		}
 	}
 	for {
@@ -346,6 +354,10 @@ func readWriteJPEGImage(imageIdx uint32, reader io.ReadSeeker, writer io.WriteSe
 				newTIFF, err := readWriteTIFFBuf(FileJPEG, imageIdx, copyBuf, control)
 				if err != nil {
 					return err
+				}
+				if newTIFF == nil {
+					// Skip empty TIFF tree.
+					continue
 				}
 				buf = append(header, newTIFF...)
 			}
@@ -402,7 +414,7 @@ func findExif(reader io.ReadSeeker) (bool, error) {
 }
 
 // Create an empty Exif node, call the ReadWrite callback on it, and
-// serialize the result.
+// serialize the result. Returns nil if the callback empties the node.
 func createExif(imageIdx uint32, control ReadWriteControl) ([]byte, error) {
 	node := tiff.NewIFDNode(tiff.TIFFSpace)
 	node.Order = binary.LittleEndian // arbitrary
@@ -414,6 +426,9 @@ func createExif(imageIdx uint32, control ReadWriteControl) ([]byte, error) {
 		return nil, err
 	}
 	newTIFF, err := readWriteTIFFBuf(FileJPEG, imageIdx, buf, control)
+	if newTIFF == nil {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -443,11 +458,11 @@ func addExifIFD(exif *Exif) {
 	exif.Exif = exifNode
 }
 
+// Given a tiff buffer, applies callbacks and returns a newly
+// allocated buffer, or nil if an error occurs or if there was no
+// output to be written.
 func readWriteTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control ReadWriteControl) ([]byte, error) {
 	exif, err := GetExifTree(buf)
-	if err != nil {
-		return nil, err
-	}
 	exif.TIFF.Fix()
 	exifNode := exif
 	for exifNode != nil {
@@ -455,7 +470,7 @@ func readWriteTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control Re
 			addExifIFD(exifNode)
 		}
 		if control.ReadWriteExif != nil {
-			if err = control.ReadWriteExif.ReadWriteExif(format, imageIdx, exifNode); err != nil {
+			if err = control.ReadWriteExif.ReadWriteExif(format, imageIdx, exifNode, err); err != nil {
 				return nil, err
 			}
 		}
@@ -471,6 +486,11 @@ func readWriteTIFFBuf(format FileFormat, imageIdx uint32, buf []byte, control Re
 			exifNode = makeExif(exifNode.TIFF.Next)
 			imageIdx++
 		}
+	}
+	exif.TIFF = exif.TIFF.DeleteEmptyIFDs()
+	if exif.TIFF == nil {
+		// No fields, empty output.
+		return nil, nil
 	}
 	bufSize := tiff.HeaderSize + exif.TreeSize()
 	outbuf := make([]byte, bufSize)
