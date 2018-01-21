@@ -12,26 +12,30 @@ import (
 type readWriteExif struct {
 }
 
-func (readWriteExif readWriteExif) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif *exif.Exif) error {
+func (readWriteExif readWriteExif) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif *exif.Exif, err error) error {
 	/*
-	           // For the first image in the file, delete any "Software"
-	           // field from the TIFF IFD0, and if there's an Exif IFD add a
-	           // LensMake field.
-	   	if imageIdx == 0 {
-	   		xif.TIFF.DeleteFields([]tiff.Tag{tiff.Software})
-	   		if xif.Exif != nil {
-	   			xif.Exif.DeleteFields([]tiff.Tag{exif.LensMake})
-	   			lens := "Dog Nose Lens"
-	   			lensField := tiff.Field{
-	   				Tag: exif.LensMake,
-	   				Type: tiff.ASCII,
-	   				Count: uint32(len(lens)),
-	   				Data: make([]byte, len(lens) + 1)}
-	   			lensField.PutASCII(lens)
-	   			xif.Exif.AddFields([]tiff.Field{lensField})
-	   		}
-	   	}
+	                   // Example
+		           // For the first image in the file, delete any "Software"
+		           // field from the TIFF IFD0, and if there's an Exif IFD add a
+		           // LensMake field.
+		   	if imageIdx == 0 {
+		   		xif.TIFF.DeleteFields([]tiff.Tag{tiff.Software})
+		   		if xif.Exif != nil {
+		   			xif.Exif.DeleteFields([]tiff.Tag{exif.LensMake})
+		   			lens := "Dog Nose Lens"
+		   			lensField := tiff.Field{
+		   				Tag: exif.LensMake,
+		   				Type: tiff.ASCII,
+		   				Count: uint32(len(lens)),
+		   				Data: make([]byte, len(lens) + 1)}
+		   			lensField.PutASCII(lens)
+		   			xif.Exif.AddFields([]tiff.Field{lensField})
+		   		}
+		   	}
 	*/
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
 	return nil
 }
 
