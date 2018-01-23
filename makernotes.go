@@ -697,7 +697,7 @@ const (
 	Olympus1RawDevelopmentIFD        = 0x2030
 	Olympus1RawDev2IFD               = 0x2031
 	Olympus1ImageProcessingIFD       = 0x2040
-	Olympus1FocusInfoIFD             = 0x2050
+	Olympus1FocusInfo                = 0x2050
 	Olympus1RawInfoIFD               = 0x3000
 )
 
@@ -808,7 +808,7 @@ var Olympus1TagNames = map[tiff.Tag]string{
 	Olympus1RawDevelopmentIFD:        "RawDevelopmentIFD",
 	Olympus1RawDev2IFD:               "RawDev2IFD",
 	Olympus1ImageProcessingIFD:       "ImageProcessingIFD",
-	Olympus1FocusInfoIFD:             "FocusInfoIFD",
+	Olympus1FocusInfo:                "FocusInfo",
 	Olympus1RawInfoIFD:               "RawInfoIFD",
 }
 
