@@ -288,6 +288,8 @@ func TagNameMap(space tiff.TagSpace) map[tiff.Tag]string {
 		names = Nikon2PreviewIFDTagNames
 	case tiff.Nikon2ScanSpace:
 		names = Nikon2ScanIFDTagNames
+	case tiff.Sony1Space:
+		names = Sony1TagNames
 	}
 	return names
 }
@@ -439,6 +441,9 @@ func (exif Exif) MakerNoteComplexities() error {
 			if len(fields) > 0 {
 				return errors.New(fmt.Sprintf("Unsupported PreviewImageInfo field in Canon maker note"))
 			}
+		} else if exif.MakerNote.GetSpace() == tiff.Sony1Space {
+			// Various preview image / subifd / sub array fields not supported.
+			return errors.New(fmt.Sprintf("Sony1 maker note not supported well enough for writing"))
 		}
 	}
 	return nil

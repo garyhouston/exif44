@@ -1492,3 +1492,162 @@ var Panasonic1TagNames = map[tiff.Tag]string{
 	Panasonic1BabyAge2:                   "BabyAge2",
 	Panasonic1Transform2:                 "Transform2",
 }
+
+// Tags in the Sony1 maker note.
+// ExifTool lib/Image/ExifTool/Sony.pm Sony::Main 
+const (
+	Sony1CameraInfo                  = 0x10
+	Sony1FocusInfo                   = 0x20
+	Sony1Quality                     = 0x102
+	Sony1FlashExposureComp           = 0x104
+	Sony1Teleconverter               = 0x105
+	Sony1WhiteBalanceFineTune        = 0x112
+	Sony1CameraSettings              = 0x114
+	Sony1WhiteBalance                = 0x115
+	Sony1ExtraInfo                   = 0x116
+	Sony1PrintIM                     = 0xE00
+	Sony1MultiBurstMode              = 0x1000
+	Sony1MultiBurstImageWidth        = 0x1001
+	Sony1MultiBurstImageHeight       = 0x1002
+	Sony1Panorama                    = 0x1003
+	Sony1PreviewImage                = 0x2001
+	Sony1Rating                      = 0x2002
+	Sony1Contrast                    = 0x2004
+	Sony1Saturation                  = 0x2005
+	Sony1Sharpness                   = 0x2006
+	Sony1Brightness                  = 0x2007
+	Sony1LongExposureNoiseReduction  = 0x2008
+	Sony1HighISONoiseReduction       = 0x2009
+	Sony1HDR                         = 0x200A
+	Sony1MultiFrameNoiseReduction    = 0x200B
+	Sony1PictureEffect               = 0x200E
+	Sony1SoftSkinEffect              = 0x200F
+	Sony1VignettingCorrection        = 0x2011
+	Sony1LateralChromaticAberration  = 0x2012
+	Sony1DistortionCorrectionSetting = 0x2013
+	Sony1WBShiftAB_GM                = 0x2014
+	Sony1AutoPortraitFramed          = 0x2016
+	Sony1FlashAction                 = 0x2017
+	Sony1FocusMode                   = 0x201B
+	Sony1AFAreaModeSetting           = 0x201C
+	Sony1FlexibleSpotPosition        = 0x201D
+	Sony1AFPointSelected             = 0x201E
+	Sony1AFPointsUsed                = 0x2020
+	Sony1FocalPlaneAFPointsUsed      = 0x2022
+	Sony1WBShiftAB_GM_Precise        = 0x2026
+	Sony1FocusLocation               = 0x2027
+	Sony1VariableLowPassFilter       = 0x2028
+	Sony1RAWFileType                 = 0x2029
+	Sony1MeteringMode2               = 0x202C
+	Sony1ShotInfo                    = 0x3000
+	Sony1AEInfo                      = 0x940E
+	Sony1FileFormat                  = 0xB000
+	Sony1SonyModelID                 = 0xB001
+	Sony1CreativeStyle               = 0xB020
+	Sony1ColorTemperature            = 0xB021
+	Sony1ColorCompensationFilter     = 0xB022
+	Sony1SceneMode                   = 0xB023
+	Sony1ZoneMatching                = 0xB024
+	Sony1DynamicRangeOptimizer       = 0xB025
+	Sony1ImageStabilization          = 0xB026
+	Sony1LensType                    = 0xB027
+	Sony1MinoltaMakerNote            = 0xB028
+	Sony1ColorMode                   = 0xB029
+	Sony1LensSpec                    = 0xB02A
+	Sony1FullImageSize               = 0xB02B
+	Sony1PreviewImageSize            = 0xB02C
+	Sony1Macro                       = 0xB040
+	Sony1ExposureMode                = 0xB041
+	Sony1FocusMode2                  = 0xB042
+	Sony1AFAreaMode                  = 0xB043
+	Sony1AFIlluminator               = 0xB044
+	Sony1JPEGQuality                 = 0xB047
+	Sony1FlashLevel                  = 0xB048
+	Sony1ReleaseMode                 = 0xB049
+	Sony1SequenceNumber              = 0xB04A
+	Sony1AntiBlur                    = 0xB04B
+	Sony1FocusMode3                  = 0xB04E
+	Sony1DynamicRangeOptimizer2      = 0xB04F
+	Sony1HighISONoiseReduction2      = 0xB050
+	Sony1IntelligentAuto             = 0xB052
+	Sony1WhiteBalance2               = 0xB054
+)
+
+// Mapping from Sony1 tags to strings.
+var Sony1TagNames = map[tiff.Tag]string{
+	Sony1CameraInfo:                  "CameraInfo",
+	Sony1FocusInfo:                   "FocusInfo",
+	Sony1Quality:                     "Quality",
+	Sony1FlashExposureComp:           "FlashExposureComp",
+	Sony1Teleconverter:               "Teleconverter",
+	Sony1WhiteBalanceFineTune:        "WhiteBalanceFineTune",
+	Sony1CameraSettings:              "CameraSettings",
+	Sony1WhiteBalance:                "WhiteBalance",
+	Sony1ExtraInfo:                   "ExtraInfo",
+	Sony1PrintIM:                     "PrintIM",
+	Sony1MultiBurstMode:              "MultiBurstMode",
+	Sony1MultiBurstImageWidth:        "MultiBurstImageWidth",
+	Sony1MultiBurstImageHeight:       "MultiBurstImageHeight",
+	Sony1Panorama:                    "Panorama",
+	Sony1PreviewImage:                "PreviewImage",
+	Sony1Rating:                      "Rating",
+	Sony1Contrast:                    "Contrast",
+	Sony1Saturation:                  "Saturation",
+	Sony1Sharpness:                   "Sharpness",
+	Sony1Brightness:                  "Brightness",
+	Sony1LongExposureNoiseReduction:  "LongExposureNoiseReduction",
+	Sony1HighISONoiseReduction:       "HighISONoiseReduction",
+	Sony1HDR:                         "HDR",
+	Sony1MultiFrameNoiseReduction:    "MultiFrameNoiseReduction",
+	Sony1PictureEffect:               "PictureEffect",
+	Sony1SoftSkinEffect:              "SoftSkinEffect",
+	Sony1VignettingCorrection:        "VignettingCorrection",
+	Sony1LateralChromaticAberration:  "LateralChromaticAberration",
+	Sony1DistortionCorrectionSetting: "DistortionCorrectionSetting",
+	Sony1WBShiftAB_GM:                "WBShiftAB_GM",
+	Sony1AutoPortraitFramed:          "AutoPortraitFramed",
+	Sony1FlashAction:                 "FlashAction",
+	Sony1FocusMode:                   "FocusMode",
+	Sony1AFAreaModeSetting:           "AFAreaModeSetting",
+	Sony1FlexibleSpotPosition:        "FlexibleSpotPosition",
+	Sony1AFPointSelected:             "AFPointSelected",
+	Sony1AFPointsUsed:                "AFPointsUsed",
+	Sony1FocalPlaneAFPointsUsed:      "FocalPlaneAFPointsUsed",
+	Sony1WBShiftAB_GM_Precise:        "WBShiftAB_GM_Precise",
+	Sony1FocusLocation:               "FocusLocation",
+	Sony1VariableLowPassFilter:       "VariableLowPassFilter",
+	Sony1RAWFileType:                 "RAWFileType",
+	Sony1MeteringMode2:               "MeteringMode2",
+	Sony1ShotInfo:                    "ShotInfo",
+	Sony1AEInfo:                      "AEInfo",
+	Sony1FileFormat:                  "FileFormat",
+	Sony1SonyModelID:                 "SonyModelID",
+	Sony1CreativeStyle:               "CreativeStyle",
+	Sony1ColorTemperature:            "ColorTemperature",
+	Sony1ColorCompensationFilter:     "ColorCompensationFilter",
+	Sony1SceneMode:                   "SceneMode",
+	Sony1ZoneMatching:                "ZoneMatching",
+	Sony1DynamicRangeOptimizer:       "DynamicRangeOptimizer",
+	Sony1ImageStabilization:          "ImageStabilization",
+	Sony1LensType:                    "LensType",
+	Sony1MinoltaMakerNote:            "MinoltaMakerNote",
+	Sony1ColorMode:                   "ColorMode",
+	Sony1LensSpec:                    "LensSpec",
+	Sony1FullImageSize:               "FullImageSize",
+	Sony1PreviewImageSize:            "PreviewImageSize",
+	Sony1Macro:                       "Macro",
+	Sony1ExposureMode:                "ExposureMode",
+	Sony1FocusMode2:                  "FocusMode2",
+	Sony1AFAreaMode:                  "AFAreaMode",
+	Sony1AFIlluminator:               "AFIlluminator",
+	Sony1JPEGQuality:                 "JPEGQuality",
+	Sony1FlashLevel:                  "FlashLevel",
+	Sony1ReleaseMode:                 "ReleaseMode",
+	Sony1SequenceNumber:              "SequenceNumber",
+	Sony1AntiBlur:                    "Anti-Blur",
+	Sony1FocusMode3:                  "FocusMode3",
+	Sony1DynamicRangeOptimizer2:      "DynamicRangeOptimizer2",
+	Sony1HighISONoiseReduction2:      "HighISONoiseReduction2",
+	Sony1IntelligentAuto:             "IntelligentAuto",
+	Sony1WhiteBalance2:               "WhiteBalance2",
+}
