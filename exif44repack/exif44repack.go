@@ -4,7 +4,6 @@ import (
 	"fmt"
 	exif "github.com/garyhouston/exif44"
 	//	tiff "github.com/garyhouston/tiff66"
-	"log"
 	"os"
 )
 
@@ -14,24 +13,24 @@ type readWriteExif struct {
 
 func (readWriteExif readWriteExif) ReadWriteExif(format exif.FileFormat, imageIdx uint32, xif *exif.Exif, err error) error {
 	/*
-	                   // Example
-		           // For the first image in the file, delete any "Software"
-		           // field from the TIFF IFD0, and if there's an Exif IFD add a
-		           // LensMake field.
-		   	if imageIdx == 0 {
-		   		xif.TIFF.DeleteFields([]tiff.Tag{tiff.Software})
-		   		if xif.Exif != nil {
-		   			xif.Exif.DeleteFields([]tiff.Tag{exif.LensMake})
-		   			lens := "Dog Nose Lens"
-		   			lensField := tiff.Field{
-		   				Tag: exif.LensMake,
-		   				Type: tiff.ASCII,
-		   				Count: uint32(len(lens)),
-		   				Data: make([]byte, len(lens) + 1)}
-		   			lensField.PutASCII(lens)
-		   			xif.Exif.AddFields([]tiff.Field{lensField})
-		   		}
-		   	}
+		                   // Example
+			           // For the first image in the file, delete any "Software"
+			           // field from the TIFF IFD0, and if there's an Exif IFD add a
+			           // LensMake field.
+			   	if imageIdx == 0 {
+			   		xif.TIFF.DeleteFields([]tiff.Tag{tiff.Software})
+			   		if xif.Exif != nil {
+			   			xif.Exif.DeleteFields([]tiff.Tag{exif.LensMake})
+			   			lens := "Dog Nose Lens"
+			   			lensField := tiff.Field{
+			   				Tag: exif.LensMake,
+			   				Type: tiff.ASCII,
+			   				Count: uint32(len(lens)),
+			   				Data: make([]byte, len(lens) + 1)}
+			   			lensField.PutASCII(lens)
+			   			xif.Exif.AddFields([]tiff.Field{lensField})
+			   		}
+			   	}
 	*/
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -49,6 +48,7 @@ func main() {
 	var control exif.ReadWriteControl
 	control.ReadWriteExif = readWriteExif{}
 	if err := exif.ReadWriteFile(os.Args[1], os.Args[2], control); err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
